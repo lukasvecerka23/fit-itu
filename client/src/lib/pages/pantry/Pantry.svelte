@@ -3,6 +3,8 @@
     import Ingredient from './components/Ingredient.svelte';
     import Sidebar from '../../components/SideBar.svelte';
     import SlideUpOverlay from '../../components/SlideUpOverlay.svelte';
+    import menu_icon from '../../../assets/menu_icon.svg';
+    import close_icon from '../../../assets/close_icon.svg';
     let pantrySections = [];
     let selectedSectionId = null;
     let ingredients = [];
@@ -72,6 +74,22 @@
     </div>
     <SlideUpOverlay show={showModal} on:close={() => showModal = false}>
         <!-- Your overlay content here -->
-        <p>This is the overlay content!</p>
+        {#each pantrySections as section}
+        <div class="flex justify-center p-2">
+        <div class="flex items-center justify-between gap-8 h-8 w-3/4 bg-primary-green rounded-lg">
+            <div class=" flex justify-start">
+              <img class="h-6 w-full ml-5" src={menu_icon} alt="Menu">
+            </div>
+            <div class=" flex-1 text-start text-white">
+              <!-- Text sem vložte -->
+              <p>{section.name}</p>
+            </div>
+            <div class=" text-right flex justify-end">
+              <!-- Ikonu 2 sem vložte -->
+              <img class="h-6 w-full mr-5 " src={close_icon} alt="Close">
+            </div>
+        </div>
+        </div>
+        {/each}
     </SlideUpOverlay>
 </div>
