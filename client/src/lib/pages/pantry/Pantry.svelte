@@ -5,6 +5,9 @@
     import SlideUpOverlay from '../../components/SlideUpOverlay.svelte';
     import menu_icon from '../../../assets/menu_icon.svg';
     import close_icon from '../../../assets/close_icon.svg';
+    import { onMount } from 'svelte';
+
+    let textField = '';
     let pantrySections = [];
     let selectedSectionId = null;
     let ingredients = [];
@@ -39,6 +42,31 @@
             console.error(err);
         });
     }
+
+    async function handleSubmit(){
+        const data = {
+            "name": textField,
+            "userId": "uvh48ynbmnnmydx"
+        };
+        const resp = await fetch('https://fit-itu.hop.sh/api/collections/pantrySections/records', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!resp.ok) {
+            const message = `An error has occured: ${resp.status}`;
+            throw new Error(message);
+        } else {
+            textField = '';
+            getSections();
+        }
+
+        const json = await resp.json();
+        console.log(json);
+    };
 
     // Function to select a section
     function selectSection(sectionId) {
@@ -79,23 +107,46 @@
 
     </div>
     <SlideUpOverlay show={showModal} on:close={() => showModal = false}>
-        <!-- Your overlay content here -->
-        {#each pantrySections as section}
-        <div class="flex justify-center p-2">
-        <div class="flex items-center justify-between gap-8 h-8 w-3/4 bg-primary-green rounded-lg">
-            <div class=" flex justify-start">
-              <img class="h-6 w-full ml-5" src={menu_icon} alt="Menu">
+        <div class="flex flex-col h-full items-center">
+            <div class="overflow-auto flex-1 w-3/4">
+                <!-- Scrollable content for pantry sections -->
+                {#each pantrySections as section}
+                <div class="flex justify-center p-2">
+                    <div class="flex items-center w-full justify-between gap-8 h-8 bg-primary-green rounded-lg">
+                        <div class="flex justify-start">
+                          <img class="h-6 w-full ml-5" src={menu_icon} alt="Menu">
+                        </div>
+                        <div class="flex-1 text-start text-white">
+                          <!-- Text here -->
+                          <p>{section.name}</p>
+                        </div>
+                        <div class="text-right flex justify-end">
+                          <!-- Icon here -->
+                          <img class="h-6 w-full mr-5 " src={close_icon} alt="Close">
+                        </div>
+                    </div>
+                </div>
+                {/each}
             </div>
-            <div class=" flex-1 text-start text-white">
-              <!-- Text sem vložte -->
-              <p>{section.name}</p>
-            </div>
-            <div class=" text-right flex justify-end">
-              <!-- Ikonu 2 sem vložte -->
-              <img class="h-6 w-full mr-5 " src={close_icon} alt="Close">
+            <div class="h-1/4 w-3/4">
+                <!-- Fixed form at the bottom -->
+                <form on:submit|preventDefault={handleSubmit} class="flex gap-3">
+                    <input
+                        type="text"
+                        id="textField"
+                        bind:value={textField}
+                        placeholder="New pantry..."
+                        class="form-input w-full px-4 py-2 bg-white border border-gray-300 rounded-xl text-gray-700 shadow-sm focus:outline-none focus:border-primary-green"
+                    />
+                    
+                    <button
+                        type="submit"
+                        class="w-1/4 py-2 px-4 rounded-xl shadow-sm text-sm font-medium text-white bg-primary-green hover:bg-secondary-green"
+                    >
+                        Save
+                    </button>
+                </form>
             </div>
         </div>
-        </div>
-        {/each}
     </SlideUpOverlay>
 </div>

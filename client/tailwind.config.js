@@ -19,7 +19,10 @@ export default {
       fontFamily: {
         'poppins': ['Poppins', 'sans-serif'],
         'poppins-light': ['Poppins-Light', 'sans-serif'],
-      }
+      },
+      borderColor: {
+        'primary-green': '#245811'
+      },
     },
   },
   plugins: [],
