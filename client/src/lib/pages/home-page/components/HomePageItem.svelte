@@ -7,8 +7,8 @@
   </script>
   
 <Link to={linkPath}>
-    <div class="flex-col bg-black bg-opacity-75 rounded-xl mx-10">
+    <div class="flex-col bg-black bg-opacity-75 rounded-xl p-5 h-[250px] w-[250px] items-center">
         <img src={logoUrl} alt="Logo" class="w-32 h-32 mx-auto" />
-        <h1 class="text-white text-5xl font-poppins font-bold mx-auto">{text}</h1>
+        <h1 class="text-white text-4xl font-poppins mx-auto text-center py-4">{text}</h1>
     </div>
 </Link>
