@@ -41,7 +41,7 @@
 </script>
 <div class="flex w-full">
     <Sidebar />
-    <div class="h-screen w-full bg-primary-white flex justify-center">
+    <div class="h-full w-full bg-primary-white flex justify-center min-h-screen">
         <div class="flex-col w-3/5 mx-auto">
                 <h1 class="text-black text-center text-4xl font-poppins py-4 font-semibold mb-0 mx-auto">Pantry</h1>
                 <div class="flex gap-2 items-center">

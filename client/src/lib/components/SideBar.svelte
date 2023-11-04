@@ -15,7 +15,7 @@
     }
 </script> 
 
-<nav class="sidebar bg-secondary-green top-0 left-0 h-screen w-24 overflow-x-hidden text-white p-0 flex flex-col justify-between">
+<nav class="sticky bg-secondary-green top-0 left-0 h-screen w-24 overflow-x-hidden text-white p-0 flex flex-col justify-between">
         <div class="flex-col">
             <img src={Logo} alt="Logo" class="w-8 h-8 mx-4" />
             <div class="home-page-item p-2.5">
