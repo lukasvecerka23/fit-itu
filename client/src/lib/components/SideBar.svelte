@@ -1,13 +1,11 @@
 <script>
-
-    import HomePageItem from "../pages/home-page/components/HomePageItem.svelte";
     import NavButton from "./NavButton.svelte";
-    import RecipeLogo from "../../assets/home-1-svgrepo-com.svg";
-    import PantryLogo from "../../assets/cupboard-svgrepo-com.svg";
-    import ShoppingListLogo from "../../assets/shopping-basket-svgrepo-com.svg";
-    import LogoutLogo from "../../assets/logout-svgrepo-com.svg";
-    import Logo from "../../assets/logo.svg";
-    import Pantry from "../pages/pantry/Pantry.svelte";
+    import RecipeLogo from "../../assets/recipe-book.svg";
+    import PantryLogo from "../../assets/pantry-logo-white.svg";
+    import ShoppingListLogo from "../../assets/shopping-list-white.svg";
+    import LogoutLogo from "../../assets/logout-white.svg";
+    import Logo from "../../assets/main-logo.png";
+    import { Link} from "svelte-routing";
     $: activepage = location;
 
     function isActivePage(page) {
@@ -15,38 +13,32 @@
     }
 </script> 
 
-<nav class="sticky bg-secondary-green top-0 left-0 h-screen w-24 overflow-x-hidden text-white p-0 flex flex-col justify-between">
+<nav class="sticky bg-secondary-green top-0 h-screen w-30 overflow-x-hidden text-white flex flex-col justify-between">
         <div class="flex-col">
-            <img src={Logo} alt="Logo" class="w-8 h-8 mx-4" />
-            <div class="home-page-item p-2.5">
-                <NavButton linkPath="/recipes"
-                text="Home"
-                logoUrl={RecipeLogo}
-                classBackgroundColor={isActivePage("/recipes") ? "bg-primary-green" : ""}
-                />
-            </div>
-            <div class="pantry-page-item p-2.5">
-                <NavButton linkPath="/pantry"
-                text="Pantry"
-                logoUrl={PantryLogo}
-                classBackgroundColor={isActivePage("/pantry") ? "bg-primary-green" : ""}
-                />
-            </div>
+            <Link to="/">
+                <img src={Logo} alt="Logo" class="w-full h-auto max-w-[120px] mx-auto" />
+            </Link>
+            <NavButton linkPath="/recipes"
+            text="Recipes"
+            logoUrl={RecipeLogo}
+            classBackgroundColor={isActivePage("/recipes") ? "bg-primary-green" : ""}
+            />
+            <NavButton linkPath="/pantry"
+            text="Pantry"
+            logoUrl={PantryLogo}
+            classBackgroundColor={isActivePage("/pantry") ? "bg-primary-green" : ""}
+            />
         </div>
-        <div>
-            <div class="shopping-list-page-item p-2.5 text-l">
-                <NavButton linkPath="/home"
-                text="Shopping List"
-                logoUrl={ShoppingListLogo}
-                classBackgroundColor={isActivePage("/shopping-list") ? "bg-primary-green" : ""}
-                />
-                </div>
-            <div class="logout-page-item p-2.5">
-                <NavButton linkPath="/"
-                text="Logout"
-                logoUrl={LogoutLogo}
-                classBackgroundColor={isActivePage("/") ? "bg-primary-green" : ""}
-                />
-                </div>
+        <div class="flex-col">
+            <NavButton linkPath="/home"
+            text="Shopping List"
+            logoUrl={ShoppingListLogo}
+            classBackgroundColor={isActivePage("/shopping-list") ? "bg-primary-green" : ""}
+            />
+            <NavButton linkPath="/"
+            text="Logout"
+            logoUrl={LogoutLogo}
+            classBackgroundColor={isActivePage("/") ? "bg-primary-green" : ""}
+            />
         </div>
   </nav>

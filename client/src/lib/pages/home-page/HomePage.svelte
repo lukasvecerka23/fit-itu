@@ -1,7 +1,7 @@
 <script>
     import HomePageItem from "./components/HomePageItem.svelte";
-    import recipeLogo from "../../../assets/recipe-logo.svg";
-    import pantryLogo from "../../../assets/pantry-logo.svg";
+    import recipeLogo from "../../../assets/recipe-book.svg";
+    import pantryLogo from "../../../assets/pantry-logo-white.svg";
 </script>
 
 <div class="h-screen w-full bg-center bg-no-repeat bg-cover background-image flex items-center justify-center">
