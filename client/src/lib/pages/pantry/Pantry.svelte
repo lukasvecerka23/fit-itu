@@ -14,6 +14,7 @@
             // Set the first section as selected, if there are any sections
             if (pantrySections.length > 0) {
                 selectedSectionId = pantrySections[0].id;
+                getIngredient(selectedSectionId);
             }
         })
         .catch(err => {
