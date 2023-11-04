@@ -1,7 +1,7 @@
 <script>
-  import LandingPage from "./lib/pages/landing-page/LandingPage.svelte";
+  import Router from "./lib/components/Router.svelte";
 </script>
 
 <main>
-  <LandingPage />
+  <Router/>
 </main>
