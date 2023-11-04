@@ -9,8 +9,8 @@
 
 <Link to={linkPath}>
     <div class="button grid justify-items-center rounded-xl {classBackgroundColor}">
-        <img src={logoUrl} alt="Logo" class="w-10 h-10 mx-4"/>
-        <h1 class="text-white font-poppins text-l">{text}</h1>
+        <img src={logoUrl} alt="Logo" class="w-10 h-10 mx-auto"/>
+        <h1 class="text-white text-center font-poppins text-sm">{text}</h1>
     </div>
 </Link>
 

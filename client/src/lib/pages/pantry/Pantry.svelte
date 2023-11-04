@@ -2,9 +2,11 @@
     import edit_icon from '../../../assets/edit_icon.svg';
     import Ingredient from './components/Ingredient.svelte';
     import Sidebar from '../../components/SideBar.svelte';
+    import SlideUpOverlay from '../../components/SlideUpOverlay.svelte';
     let pantrySections = [];
     let selectedSectionId = null;
     let ingredients = [];
+    let showModal = false;
 
     // Fetch pantry sections and set the first one as selected
     fetch('https://fit-itu.hop.sh/api/collections/pantrySections/records')
@@ -55,7 +57,7 @@
                         </button>
                     {/each}
 
-                    <button class="bg-transparent h-5 w-5">
+                    <button class="bg-transparent h-5 w-5" on:click={() => showModal = true}>
                         <img src={edit_icon} alt="Popis obrázku">
                     </button>
                 </div>
@@ -64,7 +66,12 @@
                         <Ingredient ingredient={ingredient} />
                     {/each}
                     <!-- A další komponenty -->
-                  </div>
+                </div>
         </div>
+
     </div>
+    <SlideUpOverlay show={showModal} on:close={() => showModal = false}>
+        <!-- Your overlay content here -->
+        <p>This is the overlay content!</p>
+    </SlideUpOverlay>
 </div>
