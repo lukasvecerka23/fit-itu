@@ -8,8 +8,8 @@
   </script>
 
 <Link to={linkPath}>
-    <div class="button grid justify-items-center rounded-xl {classBackgroundColor}">
-        <img src={logoUrl} alt="Logo" class="w-10 h-10 mx-auto"/>
+    <div class="flex-col items-center rounded-full m-2 py-4 {classBackgroundColor}">
+        <img src={logoUrl} alt="Logo" class="w-3/4 max-w-[40px] h-auto mx-auto"/>
         <h1 class="text-white text-center font-poppins text-sm">{text}</h1>
     </div>
 </Link>

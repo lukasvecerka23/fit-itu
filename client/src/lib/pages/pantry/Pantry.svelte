@@ -3,25 +3,29 @@
     import Ingredient from './components/Ingredient.svelte';
     import Sidebar from '../../components/SideBar.svelte';
     import SlideUpOverlay from '../../components/SlideUpOverlay.svelte';
+    import { onMount } from 'svelte';
     let pantrySections = [];
     let selectedSectionId = null;
     let ingredients = [];
     let showModal = false;
 
-    // Fetch pantry sections and set the first one as selected
-    fetch('https://fit-itu.hop.sh/api/collections/pantrySections/records')
-        .then(res => res.json())
-        .then(data => {
-            pantrySections = data.items;
-            // Set the first section as selected, if there are any sections
-            if (pantrySections.length > 0) {
-                selectedSectionId = pantrySections[0].id;
-                getIngredient(selectedSectionId);
-            }
-        })
-        .catch(err => {
-            console.error(err);
-        });
+
+    function getSections(){
+        // Fetch pantry sections and set the first one as selected
+        fetch('https://fit-itu.hop.sh/api/collections/pantrySections/records')
+            .then(res => res.json())
+            .then(data => {
+                pantrySections = data.items;
+                // Set the first section as selected, if there are any sections
+                if (pantrySections.length > 0) {
+                    selectedSectionId = pantrySections[0].id;
+                    getIngredient(selectedSectionId);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+            });
+    }
 
     function getIngredient(sectionId){
         fetch(`https://fit-itu.hop.sh/api/collections/ingredientInPantry/records?filter=(pantrySection='${sectionId}')&expand=ingredient,ingredient.unit,ingredient.category`)
@@ -41,6 +45,9 @@
         getIngredient(sectionId);
     }
     
+    onMount(() => {
+        getSections();
+    });
 </script>
 <div class="flex w-full">
     <Sidebar />
