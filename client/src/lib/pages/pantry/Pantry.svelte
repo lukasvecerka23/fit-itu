@@ -21,10 +21,11 @@
         });
 
     function getIngredient(sectionId){
-        fetch(`https://fit-itu.hop.sh/api/collections/ingredientInPantry/records?filter=(pantrySection='${sectionId}')&expand=ingredient`)
+        fetch(`https://fit-itu.hop.sh/api/collections/ingredientInPantry/records?filter=(pantrySection='${sectionId}')&expand=ingredient,ingredient.unit,ingredient.category`)
         .then(res => res.json())
         .then(data => {
             ingredients = data.items;
+            console.log(ingredients)
         })
         .catch(err => {
             console.error(err);
