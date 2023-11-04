@@ -6,6 +6,9 @@ export default {
   ],
   theme: {
     extend: {
+      brightness: {
+        '40': '.40',
+      },
       backgroundColor: {
         'primary-green': '#245811',
         'secondary-green': '#387921',
