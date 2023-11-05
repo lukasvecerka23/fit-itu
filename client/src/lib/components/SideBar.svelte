@@ -15,7 +15,7 @@
 
 <nav class="sticky bg-secondary-green top-0 h-screen w-30 overflow-x-hidden text-white flex flex-col justify-between">
         <div class="flex-col">
-            <Link to="/">
+            <Link to="/home">
                 <img src={Logo} alt="Logo" class="w-full h-auto max-w-[120px] mx-auto" />
             </Link>
             <NavButton linkPath="/recipes"
