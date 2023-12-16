@@ -7,6 +7,7 @@
     import close_icon_black from '../../../assets/close_icon_black.svg';
     import basket_to_buy from '../../../assets/basket_to_buy.svg';
     import basket_in_shopping_list from '../../../assets/basket_in_shopping_list.svg';
+    import plus_icon from '../../../assets/plus_button.svg'
     // You can add more script code here if needed
     // Fetch pantry sections and set the first one as selected
     let recipes = [];
@@ -147,6 +148,21 @@
     } catch (error) {
         console.error("Error processing shopping list:", error);
     }
+
+    const shoppingListResponse = await fetch('https://fit-itu.hop.sh/api/collections/ingredientInShoppingList/records?expand=ingredient');
+      if (!shoppingListResponse.ok) throw new Error(`HTTP error! Status: ${shoppingListResponse.status}`);
+      const shoppingListData = await shoppingListResponse.json();
+
+      // Create a map of shopping list ingredients for easy lookup
+      const shoppingListIngredientsMap = new Map(shoppingListData.items.map(item => [item.expand.ingredient.name, item]));
+
+      console.log("shopping list",shoppingListIngredientsMap);
+
+      // Determine missing ingredients
+      missingIngredientsShoppingList = selectedRecipeData.expand.ingredients.filter(ingredient => {
+        const shoppingListItem = shoppingListIngredientsMap.get(ingredient.expand.ingredientId.name);
+        return !shoppingListItem || shoppingListItem.amount < ingredient.amount;
+      });
 }
 
 
@@ -165,6 +181,12 @@
       {/each}
     </div>
   </div>
+  <!-- Create button -->
+  <div class="fixed bottom-0 right-0 mb-4 mr-4">
+    <button>
+      <img src={plus_icon} alt="plus icon" class="w-20 h-20" />
+    </button>
+    </div>
 </div>
 
 
@@ -235,6 +257,7 @@
       <!-- Action Buttons -->
       <div class="flex justify-between items-center px-4 py-4">
         <button class="bg-green-500 text-white px-6 py-2 rounded-full font-bold">Cook</button>
+        <button class="bg-yellow-500 text-white px-6 py-2 rounded-full font-bold">Edit</button>
         <button on:click={closeModal} class="bg-red-500 text-white px-6 py-2 rounded-full font-bold">Close</button>
         <!-- <button class="text-red-500">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
