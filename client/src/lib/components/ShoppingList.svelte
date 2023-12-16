@@ -21,11 +21,11 @@
 </script>
 
 {#if $showShoppingList}
-  <div class="background flex items-end fixed inset-0 bg-black  bg-opacity-75 transition-opacity" tabindex="0" role="button" on:click={handleClickOutside} on:keydown={handleClickOutside}>
+  <div class="background flex items-end fixed inset-0 z-full bg-black  bg-opacity-75 transition-opacity" tabindex="0" role="button" on:click={handleClickOutside} on:keydown={handleClickOutside}>
     <div class={`flex h-2/3 justify-center w-full p-0 transition-transform transform origin-bottom` }
     transition:fly={{ y: 200, duration: 300 }} tabindex="0" role="button" on:click={handleClickOutside} on:keydown={handleClickOutside}>
       <div class={`rounded-t-3xl w-1/2 shadow-lg bg-primary-white  p-6`}>
-        <h1 class="font-poppins font-semibold text-center mb-4 text-2xl"> Shopping list</h1>
+        <h1 class="font-poppins font-semibold text-center mb-4 text-2xl">Shopping list</h1>
       </div>
     </div>
   </div>
