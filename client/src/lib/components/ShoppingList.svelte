@@ -33,9 +33,7 @@
           "ticked": !ingredient.ticked
         })
       })   
-      .then(res => res.json())
-      .then(data => {
-        console.log(data);
+      .then((res) => {
         getIngredients();
       })
     }
@@ -161,6 +159,21 @@
         });
     });
 
+    function saveAmount(ingredient) {
+      fetch(`https://fit-itu.hop.sh/api/collections/ingredientInShoppingList/records/${ingredient.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "amount": ingredient.amount
+        })
+      })   
+      .then((res) => {
+        getIngredients();
+      })
+    }
+
     $: allTicked = ingredients.every(item => item.ticked);
 </script>
 
@@ -179,12 +192,21 @@
                 </button>
                 <h1 class={`text-2xl font-poppins py-4 mb-0 mx-auto ${ingredient.ticked ? 'text-gray-500 line-through' : 'text-black'}`}>{ingredient.expand.ingredient.name}</h1>
               </div>
-              <div class="flex gap-2">
-                <h1 class={`text-left text-2xl font-poppins py-4 mb-0 mx-auto ${ingredient.ticked ? 'text-gray-500 line-through' : 'text-black'}`}>{ingredient.amount}{ingredient.expand.ingredient.expand.unit.name}</h1>
+              <div class="flex gap-2 justify-end">
                 {#if !ingredient.ticked}
-                  <button on:click={() => tickIngredient(ingredient)}>
-                    <img src={edit_icon} alt="Ingredient circle" class="w-[30px]"/>
-                  </button>
+                <input
+                  type="number"
+                  min=0
+                  max={Number.MAX_SAFE_INTEGER}
+                  bind:value={ingredient.amount}
+                  class="border-gray-500 w-1/3 bg-primary-white font-poppins focus:border-primary-green focus:ring-opacity-50 border-2 m-2 text-xl p-2 rounded-full text-center focus:outline-none"
+                  on:blur={() => saveAmount(ingredient)}
+                />
+                {:else}
+                  <h1 class={`text-2xl font-poppins py-4 mb-0 ${ingredient.ticked ? 'text-gray-500 line-through' : 'text-black'}`}>{ingredient.amount}</h1>
+                {/if}
+                <h1 class={`text-left text-2xl font-poppins py-4 mb-0 ${ingredient.ticked ? 'text-gray-500 line-through' : 'text-black'}`}>{ingredient.expand.ingredient.expand.unit.name}</h1>
+                {#if !ingredient.ticked}
                   <button on:click={() => deleteIngredient(ingredient)}>
                     <img src={remove} alt="Ingredient circle" class="w-[30px]"/>
                   </button>
