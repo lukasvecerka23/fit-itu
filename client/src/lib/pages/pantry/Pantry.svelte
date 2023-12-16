@@ -6,6 +6,8 @@
     import menu_icon from '../../../assets/menu_icon.svg';
     import close_icon from '../../../assets/close_icon.svg';
     import { onMount } from 'svelte';
+    import {showShoppingList} from '../../../store.js';
+    import up_arrow from '../../../assets/uparrow.svg';
 
     let textField = '';
     let pantrySections = [];
@@ -77,6 +79,7 @@
     onMount(() => {
         getSections();
     });
+
 </script>
 <div class="flex w-full">
     <Sidebar />
@@ -106,7 +109,8 @@
         </div>
 
     </div>
-    <SlideUpOverlay show={showModal} on:close={() => showModal = false}>
+    <SlideUpOverlay bind:show={showModal}>
+        <h1 class="font-poppins font-semibold text-center mb-4 text-2xl"> Edit pantries</h1>
         <div class="flex flex-col h-full items-center">
             <div class="overflow-auto flex-1 w-3/4">
                 <!-- Scrollable content for pantry sections -->
@@ -149,4 +153,9 @@
             </div>
         </div>
     </SlideUpOverlay>
+    <div class="fixed inset-x-0 bottom-0 flex justify-center items-end">
+        <button class="w-1/3 bg-primary-brown text-black rounded-t-xl flex justify-center" on:click={() => showShoppingList.set(true)}>
+            <img src={up_arrow} alt="Popis obrázku" class="w-[30px]">
+        </button>
+    </div>
 </div>
