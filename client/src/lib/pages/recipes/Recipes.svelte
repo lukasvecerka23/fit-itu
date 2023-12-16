@@ -8,6 +8,7 @@
     import basket_to_buy from '../../../assets/basket_to_buy.svg';
     import basket_in_shopping_list from '../../../assets/basket_in_shopping_list.svg';
     import plus_icon from '../../../assets/plus_button.svg'
+    import {Link} from 'svelte-routing';
     // You can add more script code here if needed
     // Fetch pantry sections and set the first one as selected
     let recipes = [];
@@ -136,6 +137,7 @@
                     userId: "uvh48ynbmnnmydx", // Constant user ID sine we don't have authentication
                     ingredient: ingredientId,
                     amount: amountToAdd,
+                    ticked: false,
                 }),
             });
 
@@ -165,6 +167,9 @@
       });
 }
 
+function createRecipeId(){
+}
+
 
   </script>
 
@@ -183,9 +188,10 @@
   </div>
   <!-- Create button -->
   <div class="fixed bottom-0 right-0 mb-4 mr-4">
-    <button>
+    <Link to="/createrecipe/124123">
       <img src={plus_icon} alt="plus icon" class="w-20 h-20" />
-    </button>
+  </Link>
+      
     </div>
 </div>
 
