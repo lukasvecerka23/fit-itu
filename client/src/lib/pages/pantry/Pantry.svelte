@@ -330,7 +330,7 @@
     </div>
     
     <div class="fixed inset-x-0 bottom-0 flex justify-center items-end">
-        <button class="w-1/3 bg-primary-brown text-black rounded-t-xl flex justify-center" on:click={() => showShoppingList.set(true)}>
+        <button class="w-1/2 bg-primary-brown text-black rounded-t-xl flex justify-center" on:click={() => showShoppingList.set(true)}>
             <img src={up_arrow} alt="Popis obrázku" class="w-[30px]">
         </button>
     </div>

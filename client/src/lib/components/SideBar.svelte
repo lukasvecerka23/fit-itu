@@ -6,6 +6,7 @@
     import LogoutLogo from "../../assets/logout-white.svg";
     import Logo from "../../assets/main-logo.png";
     import { Link} from "svelte-routing";
+    import { showShoppingList } from "../../store";
     $: activepage = location;
 
     function isActivePage(page) {
@@ -30,11 +31,10 @@
             />
         </div>
         <div class="flex-col">
-            <NavButton linkPath="/home"
-            text="Shopping List"
-            logoUrl={ShoppingListLogo}
-            classBackgroundColor={isActivePage("/shopping-list") ? "bg-primary-green" : ""}
-            />
+            <button class="flex-col items-center rounded-full m-2 py-4" on:click={() => showShoppingList.set(true)}>
+                <img src={ShoppingListLogo} alt="Logo" class="w-3/4 max-w-[40px] h-auto mx-auto"/>
+                <h1 class="text-white text-center font-poppins text-sm">Shopping list</h1>
+            </button>
             <NavButton linkPath="/"
             text="Logout"
             logoUrl={LogoutLogo}
