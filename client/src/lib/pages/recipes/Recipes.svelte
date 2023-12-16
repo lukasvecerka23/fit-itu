@@ -3,13 +3,15 @@
     import Recipe from '../../components/Recipe.svelte';
     import SlideUpOverlay from '../../components/SlideUpOverlay.svelte';
     import { showShoppingList } from '../../../store';
-    import up_arrow from '../../../assets/uparrow.svg';
+    import circle_checked from '../../../assets/circle_checked.svg';
+    import close_icon_black from '../../../assets/close_icon_black.svg';
+    import basket_to_buy from '../../../assets/basket_to_buy.svg';
     // You can add more script code here if needed
     // Fetch pantry sections and set the first one as selected
     let recipes = [];
     let showModal = false;
     let selectedRecipe = null;
-    let selectedRecipeData = null;
+    export let selectedRecipeData = null;
     let ingredients = [];
     let loading = false;
     fetch('https://fit-itu.hop.sh/api/collections/recipes/records')
@@ -23,6 +25,7 @@
         });
 
     async function openModal(recipe) {
+      loading = true;
       const response = await fetch(`https://fit-itu.hop.sh/api/collections/recipes/records/${recipe.id}?expand=steps,diet,ingredients,ingredients.ingredientId,ingredients.ingredientId.unit`);
       if (!response.ok) {
         // If the response is not okay, throw an error
@@ -31,6 +34,11 @@
       selectedRecipeData = await response.json();
       // loading = true;
       console.log(selectedRecipeData);
+
+      if (selectedRecipeData && selectedRecipeData.expand && selectedRecipeData.expand.steps) {
+        selectedRecipeData.expand.steps.sort((a, b) => a.stepNumber - b.stepNumber);
+      }
+  console.log(selectedRecipeData);
       loading = true;
       selectedRecipe = recipe;
       showModal = true;
@@ -40,6 +48,12 @@
     function closeModal() {
       showModal = false;
     }
+
+    function testbutton(){
+      console.log("test");
+    }
+
+
   </script>
 
 <div class="flex w-full">
@@ -60,7 +74,7 @@
 
 <SlideUpOverlay bind:show={showModal}>
 
-  <div class={`fixed inset-0 bg-black bg-opacity-50 z-50 ${showModal ? 'flex' : 'hidden'} items-end`}>
+  <div class={`fixed inset-0 z-50 ${showModal ? 'flex' : 'hidden'} items-end`}>
     {#if loading}
     <div class="w-full max-w-screen-md mx-auto bg-white rounded-t-lg overflow-hidden">
     <div class="px-4 pt-4">
@@ -82,14 +96,27 @@
       <div class="px-4">
         <div class="grid grid-cols-3 gap-4 items-center">
           <div class="font-bold">Ingredients</div>
-          <div class="col-span-2 font-bold text-right">Amount</div>
+          <div class="col-span-2 font-bold text-middle">Amount</div>
           {#each selectedRecipeData.expand.ingredients as ingredient, index}
             <div>
               <li class="list-disc list-inside">{ingredient.expand.ingredientId.name}</li>
             </div>
-            <div class="col-span-2 text-right">
+            <div class="col-span-2 text-middle">
+              <div class="flex items-center space-x-4">
               {ingredient.amount} {ingredient.expand.ingredientId.expand.unit.name}
               <!-- Add icons here as needed -->
+              {#if 0}
+              <img src={circle_checked} alt="arrow" class="w-6 h-6" />
+              {:else}
+              <img src={close_icon_black} alt="arrow" class="w-6 h-6" />
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <!-- svelte-ignore a11y-no-static-element-interactions -->
+              <button class="w-6 h-6" on:click={() => testbutton()}>
+              <img src={basket_to_buy} alt="arrow"/>
+              </button>
+              {/if}
+                <!-- Icon SVG -->
+              </div>
             </div>
           {/each}
         </div>
@@ -100,7 +127,7 @@
         <h3 class="font-semibold text-lg mb-2">Steps</h3>
         <ol class="list-decimal pl-5">
           {#each selectedRecipeData.expand.steps as step, index}
-            {step.text}<br>
+            {@html step.text}<br>
           {/each}
         </ol>
       </div>
