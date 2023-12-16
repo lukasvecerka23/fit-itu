@@ -2,6 +2,8 @@
     import Sidebar from '../../components/SideBar.svelte';
     import Recipe from '../../components/Recipe.svelte';
     import SlideUpOverlay from '../../components/SlideUpOverlay.svelte';
+    import { showShoppingList } from '../../../store';
+    import up_arrow from '../../../assets/uparrow.svg';
     // You can add more script code here if needed
     // Fetch pantry sections and set the first one as selected
     let recipes = [];
