@@ -6,7 +6,8 @@
 
     let currentStep = 1;
     let RecipeData = null;
-  
+    export let id
+
     function goToNextStep() {
         if (currentStep < 4) {
         currentStep += 1;
