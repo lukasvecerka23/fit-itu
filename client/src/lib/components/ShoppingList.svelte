@@ -4,7 +4,6 @@
     import { fly, fade, scale } from 'svelte/transition';
     import circle from '../../assets/circle.svg';
     import circle_ticked from '../../assets/circle_checked.svg';
-    import edit_icon from '../../assets/edit_icon.svg';
     import remove from '../../assets/remove.svg';
 
     let ingredients = [];
@@ -371,7 +370,7 @@
                 <h1 class={`text-left text-2xl font-poppins py-4 mb-0 ${ingredient.ticked ? 'text-gray-500 line-through' : 'text-black'}`}>{ingredient.expand.ingredient.expand.unit.name}</h1>
                 {#if !ingredient.ticked}
                   <button on:click={() => deleteIngredient(ingredient)}>
-                    <img src={remove} alt="Ingredient circle" class="w-[30px]"/>
+                    <img src={remove} alt="Ingredient remove" class="w-[30px]"/>
                   </button>
                 {/if}
               </div>
@@ -414,7 +413,7 @@
             {/if}
           </div>
           <div class="flex justify-center gap-4">
-            <button class="bg-red-700 text-white rounded-3xl text-center px-10 py-2 hover:bg-red-800" on:click={() => deleteAllIngredients()}>Delete all</button>
+            <button class="bg-red-700 text-white rounded-3xl text-center px-10 py-2 hover:bg-primary-red" on:click={() => deleteAllIngredients()}>Delete all</button>
             <button class="bg-primary-green text-white rounded-3xl text-center px-10 py-2 hover:bg-secondary-green" on:click={() => removeAllTicked()}>Remove ticked</button>
             {#if allTicked}
               <button class="bg-primary-green text-white rounded-3xl text-center px-10 py-2 hover:bg-secondary-green" on:click={() => untickAll()}>Untick all</button>
