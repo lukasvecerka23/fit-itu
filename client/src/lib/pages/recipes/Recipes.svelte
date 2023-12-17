@@ -110,12 +110,11 @@
       const shoppingListIngredientsMap = new Map(shoppingListData.items.map(item => [item.expand.ingredient.name, item]));
 
 
-      // Determine missing ingredients
-      if(missingIngredientsShoppingList.length != 0){
-      missingIngredientsShoppingList = selectedRecipeData.expand.ingredients.filter(ingredient => {
-        const shoppingListItem = shoppingListIngredientsMap.get(ingredient.expand.ingredientId.name);
-        return !shoppingListItem || shoppingListItem.amount < ingredient.amount;
-      });
+      if(selectedRecipeData && selectedRecipeData.expand && selectedRecipeData.expand.ingredients){
+        missingIngredientsShoppingList = selectedRecipeData.expand.ingredients.filter(ingredient => {
+          const shoppingListItem = shoppingListIngredientsMap.get(ingredient.expand.ingredientId.name);
+          return !shoppingListItem || shoppingListItem.amount < ingredient.amount;
+        });
       }
 
       if (selectedRecipeData && selectedRecipeData.expand && selectedRecipeData.expand.steps) {
