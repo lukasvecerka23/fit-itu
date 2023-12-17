@@ -299,31 +299,32 @@
 
 
 
-    function handleNewIngredientClick(event)
-    {
-        // Get the input and button elements
+    function handleNewIngredientClick() {
+    // Get the input and button elements
         const inputElement = document.getElementById('newIngredient');
         const buttonElement = document.getElementById('newPantryButton');
 
+        // Check if elements exist
+        if (inputElement && buttonElement) {
         // Add a click event listener to the button
         buttonElement.addEventListener('click', function() {
             // Set focus to the input element
             inputElement.focus();
-            });
+        });
+        }
     }
-    
+
     onMount(() => {
         getIngredientTypes();
         getSections(null);
-        document.addEventListener('DOMContentLoaded', handleNewIngredientClick);
-        return () => {
-            document.removeEventListener('DOMContentLoaded', handleNewIngredientClick);
-        }
+        handleNewIngredientClick();
     });
 
     onDestroy(() => {
-        document.removeEventListener('DOMContentLoaded', handleNewIngredientClick);
-
+        const buttonElement = document.getElementById('newPantryButton');
+        if (buttonElement) {
+        buttonElement.removeEventListener('click', handleNewIngredientClick);
+        }
     });
 
 </script>
