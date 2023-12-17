@@ -98,8 +98,6 @@
         const pantryItem = pantryIngredientsMap.get(ingredient.expand.ingredientId.name);
         return !pantryItem || pantryItem.amount < ingredient.amount;
       });
-      loading = false;
-      showModal = true;
       }
 
 
@@ -123,6 +121,8 @@
       if (selectedRecipeData && selectedRecipeData.expand && selectedRecipeData.expand.steps) {
         selectedRecipeData.expand.steps.sort((a, b) => a.stepNumber - b.stepNumber);
       }
+      loading = false;
+      showModal = true;
     }
 
     function closeModal() {
