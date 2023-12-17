@@ -1,4 +1,5 @@
 <!-- Router.svelte -->
+<!-- Autors: Lukas Vecerka, Veronika Nevarilova, Jachym Dolezal -->
 <script>
     import { Router, Route, Link } from 'svelte-routing';
     import LandingPage from '../pages/landing-page/LandingPage.svelte';

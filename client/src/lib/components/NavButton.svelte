@@ -1,8 +1,13 @@
-<!-- HomePageItem.svelte -->
+<!-- 
+                Recipes.svelte
+                Jachym Dolezal
+                FIT ITU 2023
+-->
+
 <script>
     import { Link } from 'svelte-routing';
-    export let logoUrl = '/'; // Default logo path
-    export let linkPath = '/'; // Default background color class
+    export let logoUrl = '/';
+    export let linkPath = '/';
     export let text = '';
     export let classBackgroundColor = '';
   </script>

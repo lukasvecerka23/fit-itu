@@ -1,3 +1,5 @@
+<!-- HomePage.svelte -->
+<!-- Autor: Lukas Vecerka (xvecer30) -->
 <script>
     import HomePageItem from "./components/HomePageItem.svelte";
     import recipeLogo from "../../../assets/recipe-book.svg";
