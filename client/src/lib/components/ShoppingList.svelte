@@ -1,3 +1,5 @@
+<!-- Autor: Lukas Vecerka (xvecer30) -->
+
 <script>
     import { onMount } from 'svelte';
     import { showShoppingList, reloadShoppingList, reloadPantry } from '../../store.js';
@@ -18,6 +20,7 @@
     };
     var unassignedPantry = "htbj55au87v9quv";
 
+    // Fetches all ingredients in the shopping list
     function getIngredients(){
         fetch('https://fit-itu.hop.sh/api/collections/ingredientInShoppingList/records?expand=ingredient,ingredient.unit')
         .then(res => res.json())
@@ -30,6 +33,7 @@
         });
     }
 
+    // Fetches all ingredient types
     function getIngredientTypes(){
         fetch('https://fit-itu.hop.sh/api/collections/ingredients/records?expand=unit')
         .then(res => res.json())
@@ -43,6 +47,9 @@
         });
     }
 
+    // Updates the ingredient in the pantry
+    // if exists and if not, creates a new one
+    // if the ingredient is ticked, it is removed
     async function updateIngredientInPantry(ingredient)
     {
       var ingredientInPantry = await checkInPantry(ingredient);
@@ -91,6 +98,7 @@
       }
     }
 
+    // Ticks the ingredient in the shopping list
     async function tickIngredient(ingredient)
     {
       await updateIngredientInPantry(ingredient);
@@ -109,6 +117,7 @@
       })
     }
 
+    // Checks if the ingredient is in the pantry
     async function checkInPantry(ingredient)
     {
       const params = new URLSearchParams({
@@ -127,6 +136,7 @@
       }
     }
 
+    // Deletes the ingredient from the shopping list
     function deleteIngredient(ingredient)
     {
       fetch(`https://fit-itu.hop.sh/api/collections/ingredientInShoppingList/records/${ingredient.id}`, {
@@ -140,6 +150,7 @@
       })
     }
 
+    // Deletes all ingredients from the shopping list
     function deleteAllIngredients()
     {
       const fetches = [];
@@ -157,6 +168,7 @@
       })
     }
 
+    // Removes all ticked ingredients from the shopping list
     function removeAllTicked()
     {
       const fetches = [];
@@ -176,6 +188,7 @@
       })
     }
 
+    // Ticks all ingredients in the shopping list
     function tickAll()
     {
       const fetches = [];
@@ -202,6 +215,7 @@
       })
     }
 
+    // Unticks all ingredients in the shopping list
     function untickAll()
     {
       const fetches = [];
@@ -228,13 +242,14 @@
       })
     }
 
+    // Function to close the shopping list
     function handleClickOutside(event) {
         if (event.target === event.currentTarget) {
             closeList();
         }
     }
 
-      // Function to filter ingredients based on the search query
+    // Function to filter ingredients based on the search query
     function filterIngredients(query) {
       filteredIngredients = ingredientTypes.filter(ingredient =>
         ingredient.name.toLowerCase().includes(query.toLowerCase())
@@ -243,8 +258,8 @@
 
     function selectIngredient(ingredient) {
       selectedIngredient = ingredient;
-      searchQuery = ingredient.name; // Set the search query to the selected name
-      filteredIngredients = []; // Clear filtered results after selection
+      searchQuery = ingredient.name;
+      filteredIngredients = [];
       newIngredient.ingredient = ingredient.id;
     }
 

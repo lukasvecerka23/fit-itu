@@ -1,3 +1,5 @@
+<!-- LandingPage.svelte -->
+<!-- Autor: Lukas Vecerka (xvecer30) -->
 <script>
     import { Link } from 'svelte-routing';
 </script>

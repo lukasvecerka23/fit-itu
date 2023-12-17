@@ -1,3 +1,8 @@
+<!-- 
+            SlideUpOverlay.svelte
+             Veronika Nevarilova
+                FIT ITU 2023
+-->
 <script>
     import { onMount } from 'svelte';
     import { slide, fly } from 'svelte/transition';
