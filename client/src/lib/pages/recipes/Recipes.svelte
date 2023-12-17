@@ -55,10 +55,12 @@
       console.log("pantry",pantryIngredientsMap);
 
       // Determine missing ingredients
+      if (selectedRecipeData && selectedRecipeData.expand && selectedRecipeData.expand.ingredients){
       missingIngredients = selectedRecipeData.expand.ingredients.filter(ingredient => {
         const pantryItem = pantryIngredientsMap.get(ingredient.expand.ingredientId.name);
         return !pantryItem || pantryItem.amount < ingredient.amount;
       });
+      }
 
       console.log("missing ingredients",missingIngredients);
 
@@ -74,10 +76,12 @@
       console.log("shopping list",shoppingListIngredientsMap);
 
       // Determine missing ingredients
+      if(missingIngredientsShoppingList.length != 0){
       missingIngredientsShoppingList = selectedRecipeData.expand.ingredients.filter(ingredient => {
         const shoppingListItem = shoppingListIngredientsMap.get(ingredient.expand.ingredientId.name);
         return !shoppingListItem || shoppingListItem.amount < ingredient.amount;
       });
+      }
 
       if (selectedRecipeData && selectedRecipeData.expand && selectedRecipeData.expand.steps) {
         selectedRecipeData.expand.steps.sort((a, b) => a.stepNumber - b.stepNumber);
@@ -260,6 +264,7 @@ async function createAndRetrieveNewRecipe() {
 
           <!-- Ingredients List -->
           <div class="px-4">
+            {#if selectedRecipeData.ingredients.length != 0}
             <div class="grid grid-cols-3 gap-4 items-center">
               <div class="font-bold">Ingredients</div>
               <div class="col-span-2 font-bold text-middle">Amount</div>
@@ -290,15 +295,24 @@ async function createAndRetrieveNewRecipe() {
                 </div>
               {/each}
             </div>
+            {:else}
+            <div class="col-span-3 text-center">No ingredients</div>
+          {/if}
           </div>
 
           <!-- Steps -->
           <div class="px-4 my-4 overflow-scroll">
             <h3 class="font-semibold text-lg mb-2">Steps</h3>
             <ol class="list-decimal pl-5">
+              {#if selectedRecipeData == null}
+                <div class="col-span-3 text-center">No steps</div>
+              {:else}
+              {#if selectedRecipeData.steps.length != 0}
               {#each selectedRecipeData.expand.steps as step, index}
                 {@html step.text}<br>
               {/each}
+              {/if}
+              {/if}
             </ol>
           </div>
 
@@ -307,11 +321,6 @@ async function createAndRetrieveNewRecipe() {
               <button class="bg-green-500 text-white px-6 py-2 rounded-full font-bold">Cook</button>
               <button on:click={handleEditRecipe} class="bg-yellow-500 text-white px-6 py-2 rounded-full font-bold">Edit</button>
               <button on:click={closeModal} class="bg-red-500 text-white px-6 py-2 rounded-full font-bold">Close</button>
-              <!-- <button class="text-red-500">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <!-- Heart icon SVG path -->
-                <!-- </svg> -->
-              <!-- </button> -->
           </div>
       </div>
       

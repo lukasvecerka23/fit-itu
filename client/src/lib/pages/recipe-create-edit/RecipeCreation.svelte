@@ -11,6 +11,7 @@
     import Recipe from '../../components/Recipe.svelte';
     import Ingredient from '../pantry/components/Ingredient.svelte';
     import Sidebar from '../../components/SideBar.svelte';
+    import sample_image from '../../../assets/sample_image.svg';
     import { navigate } from 'svelte-routing';
 
     export let id;
@@ -18,6 +19,7 @@
     let Number = null;
     let newStep = '';
     let searchQuery = '';
+    let recipeImage = '';
     let filteredIngredients = [];
     let selectedIngredient = null;
     let selectedStep = null;
@@ -85,12 +87,19 @@
     }
 
     function handleImageSelect(event) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        RecipeData.image = event.target.result;
-      };
-      reader.readAsDataURL(file);
+      const url = recipeImage;
+      fetch(`https://fit-itu.hop.sh/api/collections/recipes/records/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "image": url
+        })
+      })
+      .then((res) => {
+        fetchRecipe();
+      })
     }
 
     async function fetchRecipe() {
@@ -332,17 +341,16 @@
           {#if RecipeData.image}
             <!-- svelte-ignore a11y-img-redundant-alt -->
             <img src={RecipeData.image} alt="Recipe image" class="w-full h-64 object-cover rounded-md" />
+          {:else}
+            <!-- svelte-ignore a11y-img-redundant-alt -->
+            <img src={sample_image} alt="Sample Recipe image" class="w-full h-64 object-cover rounded-md"/>
           {/if}
-          <label
-            for="file-upload"
-            class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white py-2 text-center cursor-pointer">
-            Select Picture
-          </label>
           <input
-            id="file-upload"
-            type="file"
-            class="hidden"
-            on:change={handleImageSelect}
+            class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white py-2 text-center cursor-pointer rounded-md"
+            type="text"
+            placeholder="Image URL..."
+            bind:value={recipeImage}
+            on:blur={() => handleImageSelect()}
           />
         </div>
       </div>
