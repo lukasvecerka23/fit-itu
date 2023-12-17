@@ -94,9 +94,7 @@
 
     // gets all the ingredients of one section
     async function getIngredient(sectionId){
-        const resp = await fetch(`https://fit-itu.hop.sh/api/collections/ingredientInPantry/
-                                  records?filter=(pantrySection='${sectionId}')&
-                                  expand=ingredient,ingredient.unit,ingredient.category`)
+        const resp = await fetch(`https://fit-itu.hop.sh/api/collections/ingredientInPantry/records?filter=(pantrySection='${sectionId}')&expand=ingredient,ingredient.unit,ingredient.category`)
         const data = await resp.json();
         return data.items;
     }

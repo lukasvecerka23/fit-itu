@@ -197,6 +197,7 @@
       }
       Promise.all(fetches).then(() => {
         getIngredients();
+      }).then(() => {
         reloadPantry.set(true);
       })
     }
@@ -222,6 +223,7 @@
       }
       Promise.all(fetches).then(() => {
         getIngredients();
+      }).then(() => {
         reloadPantry.set(true);
       })
     }
