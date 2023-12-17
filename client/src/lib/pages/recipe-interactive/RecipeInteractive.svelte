@@ -6,11 +6,16 @@
 
     let currentStep = 1;
     let RecipeData = null;
+    let recipeSteps = [];
+    let currentStepData = null;
     export let id
 
+
+    // go to next step
     function goToNextStep() {
-        if (currentStep < 4) {
+        if (currentStep < recipeSteps.length) {
         currentStep += 1;
+        currentStepData = recipeSteps[currentStep-1];
         console.log("currentStep",currentStep);
         }
     }
@@ -18,20 +23,24 @@
     function goToPreviousStep() {
         if (currentStep > 1) {
         currentStep -= 1;
+        currentStepData = recipeSteps[currentStep-1];
         console.log("currentStep",currentStep);
         }
     }
 
     async function fetchRecipe() {
-      const response = await fetch(`https://fit-itu.hop.sh/api/collections/recipes/records/${id}?expand=steps,diet,ingredients,ingredients.ingredientId,ingredients.ingredientId.unit`);
-      if (!response.ok) {
-        // If the response is not okay, throw an error
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+        const response = await fetch(`https://fit-itu.hop.sh/api/collections/recipes/records/${id}?expand=steps,diet,ingredients,ingredients.ingredientId,ingredients.ingredientId.unit`);
+        if (!response.ok) {
+            // If the response is not okay, throw an error
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
 
-      RecipeData = await response.json();
-      // loading = true;
-      console.log("data",RecipeData);
+        RecipeData = await response.json();
+        recipeSteps = RecipeData.expand.steps;
+        currentStepData = recipeSteps[currentStep-1]
+        console.log("currentStepData",currentStepData);
+        // loading = true;
+        console.log("data",RecipeData);
     }
     $:fetchRecipe();
 
