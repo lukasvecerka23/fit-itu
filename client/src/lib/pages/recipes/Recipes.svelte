@@ -190,82 +190,77 @@
 </div>
 
 
-<SlideUpOverlay bind:show={showModal}>
-
-  <div class={`fixed inset-0 z-50 ${showModal ? 'flex' : 'hidden'} items-end`}>
+<SlideUpOverlay bind:show={showModal} height="h-screen pt-10">
     {#if loading}
-    <div class="w-full max-w-screen-md mx-auto bg-white rounded-t-lg overflow-hidden">
     <div class="px-4 pt-4">
       <h2 class="text-2xl font-bold">Loading ingredients...</h2>
     </div>
-    </div>
     {:else}
-    <div class="w-full max-w-screen-md mx-auto bg-white rounded-t-lg overflow-hidden">
-
       <!-- Recipe Title -->
-      <div class="px-4 pt-4">
-        <h2 class="text-2xl font-bold">{selectedRecipe.name}</h2>
-      </div>
+      <div class="flex flex-col items-center pb-100">
+          <div class="px-4 pt-4">
+            <h2 class="text-2xl font-bold">{selectedRecipe.name}</h2>
+          </div>
 
-      <!-- Recipe Image -->
-      <img src={selectedRecipe.image} alt={selectedRecipe.name} class="w-full h-64 object-cover" />
+          <!-- Recipe Image -->
+          <img src={selectedRecipe.image} alt={selectedRecipe.name} class="w-full h-64 object-cover" />
 
-      <!-- Ingredients List -->
-      <div class="px-4">
-        <div class="grid grid-cols-3 gap-4 items-center">
-          <div class="font-bold">Ingredients</div>
-          <div class="col-span-2 font-bold text-middle">Amount</div>
-          {#each selectedRecipeData.expand.ingredients as ingredient, index}
-            <div>
-              <li class="list-disc list-inside">{ingredient.expand.ingredientId.name}</li>
+          <!-- Ingredients List -->
+          <div class="px-4">
+            <div class="grid grid-cols-3 gap-4 items-center">
+              <div class="font-bold">Ingredients</div>
+              <div class="col-span-2 font-bold text-middle">Amount</div>
+              {#each selectedRecipeData.expand.ingredients as ingredient, index}
+                <div>
+                  <li class="list-disc list-inside">{ingredient.expand.ingredientId.name}</li>
+                </div>
+                <div class="col-span-2 text-middle">
+                  <div class="flex items-center space-x-4">
+                  {ingredient.amount} {ingredient.expand.ingredientId.expand.unit.name}
+                  <!-- Add icons here as needed -->
+                  {#if missingIngredients.some(missingIngredient => missingIngredient.expand.ingredientId.name === ingredient.expand.ingredientId.name)}
+                  <img src={close_icon_black} alt="arrow" class="w-6 h-6" />
+                  <!-- svelte-ignore a11y-click-events-have-key-events -->
+                  <!-- svelte-ignore a11y-no-static-element-interactions -->
+                  {#if missingIngredientsShoppingList.some(missingIngredient => missingIngredient.expand.ingredientId.name === ingredient.expand.ingredientId.name)}
+                  <button class="w-6 h-6" on:click={() => {addIngredientToShoppingList(ingredient);}}>
+                  <img src={basket_to_buy} alt="ingredient not in shopping list"/>
+                  </button>
+                  {:else}
+                  <img src={basket_in_shopping_list} alt="ingredient in shopping list"  class="w-6 h-6"/>
+                  {/if}
+                  {:else}
+                  <img src={circle_checked} alt="arrow" class="w-6 h-6" />
+                  {/if}
+                    <!-- Icon SVG -->
+                  </div>
+                </div>
+              {/each}
             </div>
-            <div class="col-span-2 text-middle">
-              <div class="flex items-center space-x-4">
-              {ingredient.amount} {ingredient.expand.ingredientId.expand.unit.name}
-              <!-- Add icons here as needed -->
-              {#if missingIngredients.some(missingIngredient => missingIngredient.expand.ingredientId.name === ingredient.expand.ingredientId.name)}
-              <img src={close_icon_black} alt="arrow" class="w-6 h-6" />
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <!-- svelte-ignore a11y-no-static-element-interactions -->
-              {#if missingIngredientsShoppingList.some(missingIngredient => missingIngredient.expand.ingredientId.name === ingredient.expand.ingredientId.name)}
-              <button class="w-6 h-6" on:click={() => {addIngredientToShoppingList(ingredient);}}>
-              <img src={basket_to_buy} alt="ingredient not in shopping list"/>
-              </button>
-              {:else}
-              <img src={basket_in_shopping_list} alt="ingredient in shopping list"  class="w-6 h-6"/>
-              {/if}
-              {:else}
-              <img src={circle_checked} alt="arrow" class="w-6 h-6" />
-              {/if}
-                <!-- Icon SVG -->
-              </div>
-            </div>
-          {/each}
-        </div>
-      </div>
+          </div>
 
-      <!-- Steps -->
-      <div class="px-4 my-4">
-        <h3 class="font-semibold text-lg mb-2">Steps</h3>
-        <ol class="list-decimal pl-5">
-          {#each selectedRecipeData.expand.steps as step, index}
-            {@html step.text}<br>
-          {/each}
-        </ol>
+          <!-- Steps -->
+          <div class="px-4 my-4 overflow-scroll">
+            <h3 class="font-semibold text-lg mb-2">Steps</h3>
+            <ol class="list-decimal pl-5">
+              {#each selectedRecipeData.expand.steps as step, index}
+                {@html step.text}<br>
+              {/each}
+            </ol>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="fixed bottom-0 py-2">
+              <button class="bg-green-500 text-white px-6 py-2 rounded-full font-bold">Cook</button>
+              <button class="bg-yellow-500 text-white px-6 py-2 rounded-full font-bold">Edit</button>
+              <button on:click={closeModal} class="bg-red-500 text-white px-6 py-2 rounded-full font-bold">Close</button>
+              <!-- <button class="text-red-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <!-- Heart icon SVG path -->
+                <!-- </svg> -->
+              <!-- </button> -->
+          </div>
       </div>
-  
-      <!-- Action Buttons -->
-      <div class="flex justify-between items-center px-4 py-4">
-        <button class="bg-green-500 text-white px-6 py-2 rounded-full font-bold">Cook</button>
-        <button class="bg-yellow-500 text-white px-6 py-2 rounded-full font-bold">Edit</button>
-        <button on:click={closeModal} class="bg-red-500 text-white px-6 py-2 rounded-full font-bold">Close</button>
-        <!-- <button class="text-red-500">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <!-- Heart icon SVG path -->
-          <!-- </svg> -->
-        <!-- </button> -->
-      </div>
-    </div>
+      
     {/if}
-  </div>
 </SlideUpOverlay>
