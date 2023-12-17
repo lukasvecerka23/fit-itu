@@ -394,7 +394,7 @@
 <div class="flex w-full">
     <Sidebar />
     <div class="h-full w-full min-h-screen bg-primary-white flex justify-center">
-        <div class="flex-col w-3/5 mx-auto mb-20">
+        <div class="flex-col w-3/5 mx-auto items-center mb-20">
                 <h1 class="text-black text-center text-4xl font-poppins py-4 font-semibold mb-0 mx-auto">Pantry</h1>
                 <div class="flex gap-2 justify-between">
                     <div class="justify-start flex gap-2 w-auto">
@@ -475,15 +475,15 @@
                         </button>
                     </div>
                 </div>
-                <div class="w-full columns-1 md:columns-1 lg:columns-1 xl:columns-2 gap-4 pt-10">
+                <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 pt-10 gap-x-20">
                     {#each ingredients as ingredient, index}
                                 <Ingredient ingredient={ingredient} />
                     {/each}
-                    <div class={`w-[400px] h-[100px] bg-cover flex justify-end rounded-2xl `}>
-                            <div class="w-[100px] bg-white rounded-l-2xl">
+                    <div class={`w-full h-[100px] flex rounded-2xl `}>
+                            <div class="flex flex-col justify-center w-[150px] bg-cover bg-white rounded-l-2xl">
                                 <img src={camera} alt="Save"/>
                             </div>
-                            <div class="border-2 rounded-r-2xl border-primary-green bg-primary-green text-white text-center w-[300px]">
+                            <div class="border-2 rounded-r-2xl border-primary-green bg-primary-green text-white text-center w-full">
                                 <div class="items-center text-center">
                                     <div class="flex justify-between mt-1 relative">
                                         <input

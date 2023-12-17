@@ -4,14 +4,11 @@
     import { onMount } from 'svelte';
     import { showShoppingList } from '../../../store.js';
     import { fly, fade, scale } from 'svelte/transition';
-    // import circle from '../../assets/circle.svg';
-    // import circle_ticked from '../../assets/circle_checked.svg';
-    // import edit_icon from '../../assets/edit_icon.svg';
     import remove from '../../../assets/remove.svg';
     import Recipe from '../../components/Recipe.svelte';
     import Ingredient from '../pantry/components/Ingredient.svelte';
     import Sidebar from '../../components/SideBar.svelte';
-    import sample_image from '../../../assets/sample_image.svg';
+    import sample_image from '../../../assets/recipe_placeholder.jpg';
     import { navigate } from 'svelte-routing';
 
     export let id;
@@ -322,14 +319,14 @@
 
     {#if currentStep === 1}
       {#if RecipeData}
-      <div class="text-center py-4 bg-green-500 w-full">
+      <div class="text-center py-4 bg-secondary-green w-full font-poppins">
         <h2 class="text-xl font-bold text-white">What's this recipe called?</h2>
       </div>
-      <div class="flex flex-col justify-center items-center min-h-screen">
+      <div class="flex flex-col items-center">
 
-        <div class="w-full px-4 my-4">
+        <div class="w-1/2 px-4 my-4">
           <input
-            class="w-full p-2 border border-gray-300 rounded-md"
+            class="w-full p-2 border border-gray-300 rounded-full"
             type="text"
             placeholder="Name of your recipe..."
             bind:value={RecipeData.name}
@@ -337,16 +334,16 @@
           />
         </div>
 
-        <div class="w-full px-4 my-4 relative">
+        <div class="w-1/2 px-4 my-4">
           {#if RecipeData.image}
             <!-- svelte-ignore a11y-img-redundant-alt -->
-            <img src={RecipeData.image} alt="Recipe image" class="w-full h-64 object-cover rounded-md" />
+            <img src={RecipeData.image} alt="Recipe image" class="w-full h-64 object-cover rounded-t-xl" />
           {:else}
             <!-- svelte-ignore a11y-img-redundant-alt -->
-            <img src={sample_image} alt="Sample Recipe image" class="w-full h-64 object-cover rounded-md"/>
+            <img src={sample_image} alt="Sample Recipe image" class="w-full h-64 object-cover rounded-t-xl"/>
           {/if}
           <input
-            class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white py-2 text-center cursor-pointer rounded-md"
+            class="w-full bg-black bg-opacity-50 text-white py-2 text-center cursor-pointer rounded-b-xl"
             type="text"
             placeholder="Image URL..."
             bind:value={recipeImage}
@@ -361,7 +358,7 @@
         </div>
       {/if}
     {:else if currentStep === 2}
-    <div class="text-center py-4 bg-green-500">
+    <div class="text-center py-4 bg-secondary-green">
       <h2 class="text-xl font-bold text-white">Which ingredients will you need?</h2>
     </div>
     <div class="flex flex-col gap-2 items-center">
@@ -435,7 +432,7 @@
     </div>
     {:else if currentStep === 3}
       <!-- Content for Step 3 -->
-      <div class="text-center py-4 bg-green-500">
+      <div class="text-center py-4 bg-secondary-green">
         <h2 class="text-xl font-bold text-white">How is this dish prepared?</h2>
       </div>
       <div class="flex flex-col gap-2 items-center">
@@ -484,7 +481,7 @@
       <!-- ... -->
     {:else if currentStep === 4}
       <!-- Content for Step 4 (Review) -->
-      <div class="text-center py-4 bg-green-500">
+      <div class="text-center py-4 bg-secondary-green">
         <h2 class="text-xl font-bold text-white">Ready to publish? Check details.</h2>
       </div>
       <div class="px-4 pt-4">
@@ -538,28 +535,29 @@
       <!-- ... -->
     {/if}
       <!-- Navigation buttons -->
-  <div class="fixed inset-x-0 bottom-0 px-10 py-4 shadow-lg flex justify-between items-center">
-    <div>
-      {#if currentStep > 1}
-        <button class="bg-green-500 text-white px-6 py-2 rounded-full font-bold" on:click={goToPreviousStep}>Back</button>
-      {:else}
-        <!-- cancel button -->
-        <button class="bg-red-500 text-white px-6 py-2 rounded-full font-bold" on:click={handleCancel}>Cancel</button>
-      {/if}
+    <div class="flex w-1/2 justify-center mx-auto">
+      <div class="fixed bottom-0 px-10 py-4 shadow-lg flex justify-between items-center w-1/2">
+        <div>
+          {#if currentStep > 1}
+            <button class="bg-primary-green text-white px-6 py-2 rounded-full font-bold" on:click={goToPreviousStep}>Back</button>
+          {:else}
+            <!-- cancel button -->
+            <button class="bg-primary-red text-white px-6 py-2 rounded-full font-bold" on:click={handleCancel}>Cancel</button>
+          {/if}
+        </div>
+        <!-- Title showing progress in the format n/m -->
+        <div class="font-bold">
+          Step {currentStep} / 4
+        </div>
+        <div>
+          {#if currentStep < 4}
+            <button class="bg-primary-green text-white px-6 py-2 rounded-full font-bold" on:click={goToNextStep}>Next</button>
+          {:else}
+            <button class="bg-primary-green text-white px-6 py-2 rounded-full font-bold" on:click={handleFinish}>Finish</button>
+          {/if}
+        </div>
+      </div>
     </div>
-    <!-- Title showing progress in the format n/m -->
-    <div class="font-bold">
-      Step {currentStep} / 4
-    </div>
-    <div>
-      {#if currentStep < 4}
-        <button class="bg-green-500 text-white px-6 py-2 rounded-full font-bold" on:click={goToNextStep}>Next</button>
-      {:else}
-        <button class="bg-green-500 text-white px-6 py-2 rounded-full font-bold" on:click={handleFinish}>Finish</button>
-      {/if}
-    </div>
+    
   </div>
-  </div>
-  
-
 </div>

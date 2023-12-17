@@ -85,10 +85,11 @@
     }
 </script>
 
-<div class="w-[400px] h-[100px] bg-cover flex rounded-2xl overflow-hidden" draggable="true" on:dragstart={handleDragStart}>
-        <div class="flex w-[100px] cursor-move bg-cover h-full" style=" background-image: url({ingredient.expand.ingredient.imageUrl})">
+<div class="w-full">
+<div class="h-[100px] mb-4 bg-cover flex rounded-2xl overflow-hidden" draggable="true" on:dragstart={handleDragStart}>
+        <div class="flex w-[150px] cursor-move bg-cover h-full" style=" background-image: url({ingredient.expand.ingredient.imageUrl})">
         </div>
-        <div class="border-2 rounded-r-2xl border-primary-green bg-primary-green text-white text-center w-[300px]">
+        <div class="border-2 rounded-r-2xl border-primary-green bg-primary-green text-white text-center w-full">
             <div class="items-center text-center">
                 <div class="flex justify-between mt-1">
                     <p class="text-lg w-auto pl-2">{ingredient.expand.ingredient.name}</p>
@@ -117,4 +118,5 @@
                 </div>
             </div>
         </div>
+</div>
 </div>
