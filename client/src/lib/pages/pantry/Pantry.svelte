@@ -47,7 +47,7 @@
         // Fetch pantry sections and set the first one as selected
         fetch('https://fit-itu.hop.sh/api/collections/pantrySections/records')
             .then(res => res.json())
-            .then(data => {
+            .then(async (data) => {
                 pantrySections = data.items;
                 // Set the first section as selected, if there are any sections
                 if (pantrySections.length > 0) {
@@ -58,7 +58,7 @@
                     {
                         selectedSectionId = pantrySections[0].id;
                     }
-                    getIngredient(selectedSectionId);
+                    ingredients = await getIngredient(selectedSectionId);                    
                 }
             })
             .catch(err => {
@@ -66,22 +66,19 @@
             });
     }
 
-    function getIngredient(sectionId){
-        fetch(`https://fit-itu.hop.sh/api/collections/ingredientInPantry/records?filter=(pantrySection='${sectionId}')&expand=ingredient,ingredient.unit,ingredient.category`)
-        .then(res => res.json())
-        .then(data => {
-            ingredients = data.items;
-            console.log(ingredients)
-        })
-        .catch(err => {
-            console.error(err);
-        });
+    async function getIngredient(sectionId){
+        let return_value = []
+        const resp = await fetch(`https://fit-itu.hop.sh/api/collections/ingredientInPantry/records?filter=(pantrySection='${sectionId}')&expand=ingredient,ingredient.unit,ingredient.category`)
+        const data = await resp.json();
+
+        return data.items;
     }
 
     // Function to select a section
-    function selectSection(sectionId) {
+    async function selectSection(sectionId) {
         selectedSectionId = sectionId;
-        getIngredient(sectionId);
+        ingredients = await getIngredient(sectionId);
+        searchQuery = null;
     }
 
     async function deletePantrySection() 
@@ -298,16 +295,14 @@
     }
 
     function handleDragOver(event) {
-        event.preventDefault(); // This is necessary to allow a drop
+        event.preventDefault();
     }
   
-    function handleDrop(event) {
+    async function handleDrop(event) {
         event.preventDefault();
         const sectionId = event.currentTarget.dataset.sectionId;
         const ingredientId = event.dataTransfer.getData('text/plain');
-        // Call your method to assign the ingredient to the section
-        // console.log(`Assign ingredient ${ingredientId} to section ${sectionId}`);
-        assignIngredientToSection(ingredientId, sectionId);
+        await assignIngredientToSection(ingredientId, sectionId);
     }
 
     function handleNewIngredientClick() {
@@ -325,8 +320,41 @@
         }
     }
 
-    function assignIngredientToSection(ingredientId, sectionId) {
-        fetch(`https://fit-itu.hop.sh/api/collections/ingredientInPantry/records/${ingredientId}`, {
+    async function assignIngredientToSection(ingredientId, sectionId) 
+    {
+        let ingredientsInNewSection = await getIngredient(sectionId);
+        let ingredientToFind = ingredients.find(ing => ing.id === ingredientId);
+        let matchingIngredient = ingredientsInNewSection.find(newSectionIng => newSectionIng.ingredient === ingredientToFind.expand.ingredient.id);
+
+        if (matchingIngredient != null)
+        {
+            fetch(`https://fit-itu.hop.sh/api/collections/ingredientInPantry/records/${matchingIngredient.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                pantrySection: sectionId,
+                ingredient: matchingIngredient.ingredient,
+                amount: matchingIngredient.amount + ingredientToFind.amount
+            })
+            })
+
+            fetch(`https://fit-itu.hop.sh/api/collections/ingredientInPantry/records/${ingredientId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            })
+            .then(() => {
+                getSections(selectedSectionId);
+            })
+            return;
+
+
+        } else
+        {
+            fetch(`https://fit-itu.hop.sh/api/collections/ingredientInPantry/records/${ingredientId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
@@ -334,11 +362,11 @@
             body: JSON.stringify({
                 pantrySection: sectionId
             })
-        })
-        .then(() => {
-            selectedSectionId = sectionId;
-            getSections(sectionId);
-        })
+            })
+            .then(() => {
+                getSections(selectedSectionId);
+            })
+        }
     }
 
     onMount(() => {
@@ -366,11 +394,11 @@
                         {#if edit_pantry_id != section.id}
                         <div
                         on:dragover={handleDragOver}
-                        on:drop={handleDrop}
+                        on:drop={async (e) => await handleDrop(e)}
                         data-section-id={section.id}
                         >
                             <button
-                            on:click={() => selectSection(section.id)}
+                            on:click={async () => await selectSection(section.id)}
                             class={`${selectedSectionId === section.id ? 'bg-primary-green flex text-white border-2 hover:cursor-default hover:bg-primary-green border-primary-green' : 'bg-primary-white text-black'} border-black items-center hover:bg-secondary-green hover:text-white hover:border-primary-green text-xs font-semibold rounded-2xl text-center w-auto h-7 border-2`}>
                             <div class="ml-5 mr-5 text-sm">
                                 {section.name}

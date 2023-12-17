@@ -84,7 +84,7 @@
 </script>
 
 <div class="w-[350px] h-[100px] bg-cover flex rounded-2xl overflow-hidden" draggable="true" on:dragstart={handleDragStart}>
-        <div class="flex w-[100px] bg-cover h-full" style=" background-image: url({ingredient.expand.ingredient.imageUrl})">
+        <div class="flex w-[100px] cursor-move bg-cover h-full" style=" background-image: url({ingredient.expand.ingredient.imageUrl})">
         </div>
         <div class="border-2 rounded-r-2xl border-primary-green bg-primary-green text-white text-center w-[250px]">
             <div class="items-center text-center">
