@@ -8,6 +8,7 @@
     import basket_to_buy from '../../../assets/basket_to_buy.svg';
     import basket_in_shopping_list from '../../../assets/basket_in_shopping_list.svg';
     import plus_icon from '../../../assets/plus_button.svg'
+    import {navigate} from 'svelte-routing';
     // You can add more script code here if needed
     // Fetch pantry sections and set the first one as selected
     let recipes = [];
@@ -136,6 +137,7 @@
                     userId: "uvh48ynbmnnmydx", // Constant user ID sine we don't have authentication
                     ingredient: ingredientId,
                     amount: amountToAdd,
+                    ticked: false,
                 }),
             });
 
@@ -165,6 +167,53 @@
       });
 }
 
+async function createAndRetrieveNewRecipe() {
+    try {
+      // POST request to create a new recipe
+      let postResponse = await fetch('https://fit-itu.hop.sh/api/collections/recipes/records', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userId: "uvh48ynbmnnmydx", // Constant user ID sine we don't have authentication
+                    duration: 0,
+                    difficulty: 0,
+                    ticked: false,
+                }),
+            });
+
+      if (!postResponse.ok) {
+        throw new Error(`HTTP error! Status: ${postResponse.status}`);
+      }
+
+      // Assuming the POST request returns the new recipe object with an ID
+      let newRecipe = await postResponse.json();
+      console.log('Created new recipe with ID:', newRecipe.id);
+
+      // GET request to retrieve the new recipe
+      let getResponse = await fetch(`https://fit-itu.hop.sh/api/collections/recipes/records/${newRecipe.id}`);
+
+      if (!getResponse.ok) {
+        throw new Error(`HTTP error! Status: ${getResponse.status}`);
+      }
+
+      let retrievedRecipe = await getResponse.json();
+      console.log('Retrieved new recipe:', retrievedRecipe);
+
+      return retrievedRecipe; // Return the retrieved recipe object
+
+    } catch (error) {
+      console.error('Error creating and retrieving new recipe:', error);
+    }
+  }
+  async function handleCreateRecipeClick() {
+    const newRecipe = await createAndRetrieveNewRecipe();
+    if (newRecipe && newRecipe.id) {
+      navigate(`/createrecipe/${newRecipe.id}`);
+    }
+  }
+
 
   </script>
 
@@ -183,10 +232,10 @@
   </div>
   <!-- Create button -->
   <div class="fixed bottom-0 right-0 mb-4 mr-4">
-    <button>
+    <button on:click={handleCreateRecipeClick} class="focus:outline-none">
       <img src={plus_icon} alt="plus icon" class="w-20 h-20" />
     </button>
-    </div>
+  </div>
 </div>
 
 

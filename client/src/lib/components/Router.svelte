@@ -5,11 +5,13 @@
     import HomePage from '../pages/home-page/HomePage.svelte';
     import Recipes from '../pages/recipes/Recipes.svelte';
     import Pantry from '../pages/pantry/Pantry.svelte';
+    import RecipeCreation from '../pages/recipe-create-edit/RecipeCreation.svelte';
 </script>
   
 <Router>
     <Route path="/" component={LandingPage} />
     <Route path="home" component={HomePage} />
     <Route path="recipes" component={Recipes} />
+    <Route path="createrecipe/:id" component={RecipeCreation} />
     <Route path="pantry" component={Pantry} />
 </Router>
