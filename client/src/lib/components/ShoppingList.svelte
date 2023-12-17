@@ -270,18 +270,19 @@
 
 {#if $showShoppingList}
   <div class="background flex items-end fixed inset-0 z-full bg-black  bg-opacity-75 transition-opacity" tabindex="0" role="button" on:click={handleClickOutside} on:keydown={handleClickOutside}>
-    <div class={`flex h-2/3 justify-center w-full p-0 transition-transform transform origin-bottom` }
+    <div class={`flex h-5/6 justify-center w-full p-0 transition-transform transform origin-bottom` }
     transition:fly={{ y: 200, duration: 300 }} tabindex="0" role="button" on:click={handleClickOutside} on:keydown={handleClickOutside}>
-      <div class={`rounded-t-3xl w-1/2 shadow-lg bg-primary-brown  p-6`}>
+      <div class={`flex flex-col justify-between rounded-t-3xl h-full w-1/2 shadow-lg bg-primary-brown  p-6`}>
         <h1 class="text-black text-center text-4xl font-poppins py-4 font-semibold mb-0 mx-auto">Shopping list</h1>
-        <div class="flex flex-col gap-2 items-center">
+        <div class="flex-1 overflow-y-auto">
+        <div class="flex flex-col gap-2 items-center ">
           {#each ingredients as ingredient}
             <div class="flex justify-between border-b-2 border-black w-2/3">
-              <div class="flex gap-2">
+              <div class="flex gap-2 w-1/2 text-left">
                 <button on:click={() => tickIngredient(ingredient)}>
                   <img src={ingredient.ticked ? circle_ticked : circle} alt="Ingredient circle" class="w-[30px]"/>
                 </button>
-                <h1 class={`text-2xl font-poppins py-4 mb-0 mx-auto ${ingredient.ticked ? 'text-gray-500 line-through' : 'text-black'}`}>{ingredient.expand.ingredient.name}</h1>
+                <h1 class={`text-2xl font-poppins py-4 ${ingredient.ticked ? 'text-gray-500 line-through' : 'text-black'} ove`}>{ingredient.expand.ingredient.name}</h1>
               </div>
               <div class="flex gap-2 justify-end">
                 {#if !ingredient.ticked}
@@ -306,41 +307,42 @@
             </div>
           {/each}
         </div>
-      </div>
-      <div class="fixed bottom-0 flex flex-col ">
-        <div class="relative flex gap-2">
-          <input
-            type="text"
-            placeholder="Search for ingredients..."
-            bind:value={searchQuery}
-            on:input={() => filterIngredients(searchQuery)}
-            class="border-2 border-gray-700 p-2 rounded-full w-full focus:border-primary-green focus:outline-none font-poppins bg-primary-brown text-xl placeholder-gray-700"
-          />
-          {#if searchQuery && filteredIngredients.length}
-            <div class="absolute border-black bg-opacity-50 flex flex-col bg-primary-white mb-2 bottom-full z-10 w-full rounded-2xl border font-poppins">
-              {#each filteredIngredients as ingredient}
-                <button
-                  on:click={() => selectIngredient(ingredient)}
-                  class="p-2 hover:bg-primary-white cursor-pointer rounded-full text-left"
-                  in:fade={{ delay: 100 * (filteredIngredients.indexOf(ingredient)), duration: 300 }}
-                  >
-                  {ingredient.name}
-                </button>
-              {/each}
-            </div>
-          {/if}
-          {#if selectedIngredient}
-            <input
-              type="number"
-              min=0
-              bind:value={newIngredient.amount}
-              max={Number.MAX_SAFE_INTEGER}
-              class="border-gray-600 w-1/3 bg-primary-brown font-poppins focus:border-primary-green focus:ring-opacity-50 border-2 px-2 text-xl rounded-full text-center focus:outline-none"/>
-            <h1 class="text-2xl font-poppins py-2">{selectedIngredient.expand.unit.name}</h1>
-            <button class="bg-primary-green text-white rounded-3xl text-center px-4 hover:bg-secondary-green" on:click={() => saveIngredient()}>Add</button>
-          {/if}
+        
         </div>
-          <div class="flex justify-center gap-4 p-4">
+        <div class="flex flex-col gap-2 items-center">
+          <div class="relative flex gap-2 w-2/3">
+            <input
+              type="text"
+              placeholder="Search for ingredients..."
+              bind:value={searchQuery}
+              on:input={() => filterIngredients(searchQuery)}
+              class="border-2 border-gray-700 p-2 rounded-full w-full focus:border-primary-green focus:outline-none font-poppins bg-primary-brown text-xl placeholder-gray-700"
+            />
+            {#if searchQuery && filteredIngredients.length}
+              <div class="absolute border-black bg-opacity-50 flex flex-col bg-primary-white mb-2 bottom-full z-10 w-full rounded-2xl border font-poppins">
+                {#each filteredIngredients as ingredient}
+                  <button
+                    on:click={() => selectIngredient(ingredient)}
+                    class="p-2 hover:bg-primary-white cursor-pointer rounded-full text-left"
+                    in:fade={{ delay: 100 * (filteredIngredients.indexOf(ingredient)), duration: 300 }}
+                    >
+                    {ingredient.name}
+                  </button>
+                {/each}
+              </div>
+            {/if}
+            {#if selectedIngredient}
+              <input
+                type="number"
+                min=0
+                bind:value={newIngredient.amount}
+                max={Number.MAX_SAFE_INTEGER}
+                class="border-gray-600 w-1/3 bg-primary-brown font-poppins focus:border-primary-green focus:ring-opacity-50 border-2 px-2 text-xl rounded-full text-center focus:outline-none"/>
+              <h1 class="text-2xl font-poppins py-2">{selectedIngredient.expand.unit.name}</h1>
+              <button class="bg-primary-green text-white rounded-3xl text-center px-4 hover:bg-secondary-green" on:click={() => saveIngredient()}>Add</button>
+            {/if}
+          </div>
+          <div class="flex justify-center gap-4">
             <button class="bg-red-700 text-white rounded-3xl text-center px-10 py-2 hover:bg-red-800" on:click={() => deleteAllIngredients()}>Delete all</button>
             <button class="bg-primary-green text-white rounded-3xl text-center px-10 py-2 hover:bg-secondary-green" on:click={() => removeAllTicked()}>Remove ticked</button>
             {#if allTicked}
@@ -349,7 +351,9 @@
               <button class="bg-primary-green text-white rounded-3xl text-center px-10 py-2 hover:bg-secondary-green" on:click={() => tickAll()}>Tick all</button>
             {/if}
           </div>
+        </div>  
       </div>
+      
     </div>
   </div>
 {/if}
