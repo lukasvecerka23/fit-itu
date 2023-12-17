@@ -1,9 +1,7 @@
 <script>
-    // export let imageurl = '';
     export let name = '';
-    export let description = '';
     export let imageurl = '';
-  </script>
+</script>
 
   <div class="max-w-sm overflow-hidden hover:scale-105">
     <!-- svelte-ignore a11y-img-redundant-alt -->

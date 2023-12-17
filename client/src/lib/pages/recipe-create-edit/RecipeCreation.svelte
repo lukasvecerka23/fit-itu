@@ -10,36 +10,20 @@
     import Sidebar from '../../components/SideBar.svelte';
     import sample_image from '../../../assets/recipe_placeholder.jpg';
     import { navigate } from 'svelte-routing';
+    import recipe_placeholder from '../../../assets/recipe_placeholder.jpg';
 
     export let id;
     let RecipeData = null ;
-    let Number = null;
     let newStep = '';
+    let newImageUrl = '';
     let searchQuery = '';
-    let recipeImage = '';
     let filteredIngredients = [];
     let selectedIngredient = null;
-    let selectedStep = null;
     let ingredientTypes = [];
-    let ingredients = [];
     let newIngredient = {
       ingredient: null,
       amount: 0,
     };
-
-
-    function getIngredients(){
-        fetch(`https://fit-itu.hop.sh/api/collections/recipes/records/${id}?expand=ingredients,ingredients.ingredientId,ingredients.ingredientId.unit`)
-        .then(res => res.json())
-        .then(data => {
-            console.log("ingredient data",data.expand.ingredients);
-            ingredients = data.expand.ingredients;
-            console.log(ingredients)
-        })
-        .catch(err => {
-            console.error(err);
-        });
-    }
 
     function getIngredientTypes(){
         fetch('https://fit-itu.hop.sh/api/collections/ingredients/records?expand=unit')
@@ -47,7 +31,6 @@
         .then(data => {
             ingredientTypes = data.items;
             filteredIngredients = ingredientTypes;
-            console.log(ingredientTypes);
         })
         .catch(err => {
             console.error(err);
@@ -62,40 +45,33 @@
       if (currentStep < 4) {
         currentStep += 1;
         if (currentStep == 2){
-          getIngredients();
           getIngredientTypes();
         }
-        fetchRecipe();
-        console.log("currentStep",currentStep);
       }
     }
   
     function goToPreviousStep() {
       if (currentStep > 1) {
         currentStep -= 1;
-        console.log("currentStep",currentStep);
       }
     }
   
     function handleFinish() {
-      alert('Recipe submitted!');
       navigate('/recipes');
-      // Here you would handle the submission of the recipe, such as a POST request to a server
     }
 
     function handleImageSelect(event) {
-      const url = recipeImage;
       fetch(`https://fit-itu.hop.sh/api/collections/recipes/records/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          "image": url
+          "image": RecipeData.image
         })
       })
-      .then((res) => {
-        fetchRecipe();
+      .then(async () => {
+        await fetchRecipe();
       })
     }
 
@@ -107,16 +83,12 @@
       }
 
       RecipeData = await response.json();
-      // loading = true;
-      console.log("data",RecipeData);
     }
+
     $:fetchRecipe();
 
     function saveIngredient(){
-      console.log(newIngredient);
-      const exists = ingredients.find(item => item.ingredient === newIngredient.ingredient);
-      console.log(exists);
-      let new_id = null;
+      const exists = (RecipeData.ingredients.length > 0) ? RecipeData.expand.ingredients.find(item => item.ingredientId === newIngredient.ingredient) : null;
       if (exists) {
         fetch(`https://fit-itu.hop.sh/api/collections/ingredientInRecipe/records/${exists.id}`, {
           method: 'PATCH',
@@ -128,9 +100,8 @@
             "recipeId": id,
             "amount": exists.amount + newIngredient.amount
           })
-        })
-        .then((res) => {
-          getIngredients();
+        }).then(async () => {
+          await fetchRecipe();
         })
       } else {
         fetch('https://fit-itu.hop.sh/api/collections/ingredientInRecipe/records', {
@@ -145,18 +116,10 @@
           })
         })   
         .then((res) => {
-          // save the new ingredient to the recipe
-
-          getIngredients();
           return res.json();
         })
         .then((data) => {
-          console.log(data);
-          new_id = data.id;
-          console.log("new id",new_id);
-          // add ingredient ids to list of ingredients
-          let updatedIngredientsids = RecipeData.ingredients;
-          updatedIngredientsids.push(new_id);
+          const new_id = data.id;
           fetch(`https://fit-itu.hop.sh/api/collections/recipes/records/${id}`, {
             method: 'PATCH',
             headers: {
@@ -164,15 +127,13 @@
             },
 
             body: JSON.stringify({
-              "ingredients": updatedIngredientsids
+              "ingredients+": new_id
             })
           })
-          .then((res) => {
-            getIngredients();
+          .then(async () => {
+            await fetchRecipe();
           })
         });
-        // get the id of the new ingredient from the response
-        console.log(new_id);
       }
       clearThings();
     }
@@ -189,8 +150,8 @@
           "amount": ingredient.amount
         })
       })   
-      .then((res) => {
-        getIngredients();
+      .then(async () => {
+        await fetchRecipe();
       })
     }
 
@@ -202,18 +163,29 @@
           'Content-Type': 'application/json'
         },
       })
-      .then((res) => {
-        getIngredients();
+      .then(async () => {
+        await fetchRecipe();
       })
     }
 
-    async function addIngredient(){
-      console.log("addIngredient");
+    function saveStep(step){
+      fetch(`https://fit-itu.hop.sh/api/collections/recipeSteps/records/${step.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "stepNumber": step.stepNumber,
+          "text": step.text,
+          "media": step.media,
+        })
+      })   
+      .then(async () => {
+        await fetchRecipe();
+      })
     }
 
-    function saveStep(){
-      console.log("saveStep");
-      console.log(newStep);
+    function createStep(){
       fetch('https://fit-itu.hop.sh/api/collections/recipeSteps/records', {
         method: 'POST',
         headers: {
@@ -222,20 +194,15 @@
         body: JSON.stringify({
           "stepNumber": RecipeData.steps.length + 1,
           "text": newStep,
-          "recipeId": id
+          "recipeId": id,
+          "media": newImageUrl
         })
-      })   
+      }) 
       .then((res) => {
-        getIngredients();
         return res.json();
       })
       .then((data) => {
-        console.log(data);
-        let newStepid = data.id;
-        console.log("new id",newStepid);
-        // add the new step to the recipe
-        let updatedStepsids = RecipeData.steps;
-        updatedStepsids.push(newStepid);
+        const new_id = data.id;
         fetch(`https://fit-itu.hop.sh/api/collections/recipes/records/${id}`, {
           method: 'PATCH',
           headers: {
@@ -243,10 +210,13 @@
           },
 
           body: JSON.stringify({
-            "steps": updatedStepsids
+            "steps+": new_id
           })
         })
-
+        .then(async () => {
+          await fetchRecipe();
+          newStep = '';
+        })
       });
     }
 
@@ -291,8 +261,8 @@
           "name": RecipeData.name
         })
       })
-      .then((res) => {
-        getIngredients();
+      .then(async () => {
+        await fetchRecipe();
       })
     }
 
@@ -305,10 +275,14 @@
           'Content-Type': 'application/json'
         },
       })
-      .then((res) => {
-        getIngredients();
+      .then(async () => {
+        await fetchRecipe();
       })
     }
+
+    onMount(async () => {
+      await fetchRecipe();
+    });
 
   </script>
 
@@ -346,7 +320,7 @@
             class="w-full bg-black bg-opacity-50 text-white py-2 text-center cursor-pointer rounded-b-xl"
             type="text"
             placeholder="Image URL..."
-            bind:value={recipeImage}
+            bind:value={RecipeData.image}
             on:blur={() => handleImageSelect()}
           />
         </div>
@@ -361,18 +335,18 @@
     <div class="text-center py-4 bg-secondary-green">
       <h2 class="text-xl font-bold text-white">Which ingredients will you need?</h2>
     </div>
-    <div class="flex flex-col gap-2 items-center">
+    <div class="w-2/3 flex flex-col gap-2 items-center mx-auto mt-10">
       {#if RecipeData.ingredients.length === 0}
         <div class="flex justify-center">
           <h1 class="text-2xl font-poppins py-4 mb-0 mx-auto text-black">No ingredients added yet</h1>
         </div>
       {:else}
         {#each RecipeData.expand.ingredients as ingredient}
-          <div class="flex justify-between border-b-2 border-black w-2/3">
+          <div class="flex justify-between items-center border-b-2 border-black w-2/3">
           <div class="flex gap-2">
               <h1 class={`text-2xl font-poppins py-4 mb-0 mx-auto text-black`}>{ingredient.expand.ingredientId.name}</h1>
-
-          <div class="flex gap-2">
+          </div>
+          <div class="flex gap-2 items-center">
             <input
               type="number"
               min=0
@@ -381,53 +355,48 @@
               on:blur={() => saveAmount(ingredient)}
               class="border-gray-600 font-poppins  focus:ring-opacity-50 border-2 m-4 text-xl p-4 rounded-full text-center focus:outline-none"
             />
-          </div>
-          <div class="flex gap-2"></div>
-          <h1 class="text-2xl font-poppins py-4 mb-0 mx-auto text-black"> {ingredient.expand.ingredientId.expand.unit.name}</h1>
-          </div>
-          <div class="flex gap-2 justify-end">
-          <button on:click={() => deleteIngredient(ingredient)}>
-            <img src={remove} alt="remove" class="w-6 h-6"/>
-          </button>
+            <h1 class="text-2xl font-poppins py-4 mx-auto text-black"> {ingredient.expand.ingredientId.expand.unit.name}</h1>
+            <button on:click={() => deleteIngredient(ingredient)}>
+              <img src={remove} alt="remove" class="w-[30px]"/>
+            </button>
           </div>
           </div>
         {/each}
-        <div class="relative flex gap-2 w-2/3">
-          <input
-            type="text"
-            placeholder="Search for ingredients..."
-            bind:value={searchQuery}
-            on:input={() => filterIngredients(searchQuery)}
-            class="border-2 border-gray-700 p-2 rounded-full w-full focus:border-primary-green focus:outline-none font-poppins bg-primary-brown text-xl placeholder-gray-700"
-          />
-          {#if searchQuery && filteredIngredients.length}
-            <div class="absolute border-black bg-opacity-50 flex flex-col bg-primary-white mb-2 bottom-full z-10 w-full rounded-2xl border font-poppins">
-              {#each filteredIngredients as ingredient}
-                <button
-                  on:click={() => selectIngredient(ingredient)}
-                  class="p-2 hover:bg-primary-white cursor-pointer rounded-full text-left"
-                  in:fade={{ delay: 100 * (filteredIngredients.indexOf(ingredient)), duration: 300 }}
-                  >
-                  {ingredient.name}
-                </button>
-              {/each}
-            </div>
-          {/if}
-          {#if selectedIngredient}
-            <input
-              type="number"
-              min=0
-              bind:value={newIngredient.amount}
-              max={1000}
-              class="border-gray-600 w-1/3 bg-primary-brown font-poppins focus:border-primary-green focus:ring-opacity-50 border-2 px-2 text-xl rounded-full text-center focus:outline-none"/>
-            <h1 class="text-2xl font-poppins py-2">{selectedIngredient.expand.unit.name}</h1>
-            <button class="bg-primary-green text-white rounded-3xl text-center px-4 hover:bg-secondary-green" on:click={() => saveIngredient()}>Add</button>
-          {/if}
-        </div>
+        
       {/if}
-      <!-- add ingredient button -->
-      <div class="flex justify-center">
-        <button class="bg-green-500 text-white px-6 py-2 rounded-full font-bold" on:click={() => addIngredient()}>Add ingredient</button>
+
+      <!-- Search for new ingredients -->
+      <div class="relative flex gap-2 w-1/2">
+        <input
+          type="text"
+          placeholder="Search for ingredients..."
+          bind:value={searchQuery}
+          on:input={() => filterIngredients(searchQuery)}
+          class="border-2 border-gray-700 p-2 rounded-full w-full focus:border-primary-green focus:outline-none font-poppins bg-primary-brown text-xl placeholder-gray-700"
+        />
+        {#if searchQuery && filteredIngredients.length}
+          <div class="absolute border-black bg-opacity-50 flex flex-col mt-14 bg-primary-white z-10 w-full rounded-2xl border font-poppins">
+            {#each filteredIngredients as ingredient}
+              <button
+                on:click={() => selectIngredient(ingredient)}
+                class="p-2 hover:bg-primary-white cursor-pointer rounded-full text-left"
+                in:fade={{ delay: 100 * (filteredIngredients.indexOf(ingredient)), duration: 300 }}
+                >
+                {ingredient.name}
+              </button>
+            {/each}
+          </div>
+        {/if}
+        {#if selectedIngredient}
+          <input
+            type="number"
+            min=0
+            bind:value={newIngredient.amount}
+            max={1000}
+            class="border-gray-600 w-1/3 bg-primary-brown font-poppins focus:border-primary-green focus:ring-opacity-50 border-2 px-2 text-xl rounded-full text-center focus:outline-none"/>
+          <h1 class="text-2xl font-poppins py-2">{selectedIngredient.expand.unit.name}</h1>
+          <button class="bg-primary-green text-white rounded-3xl text-center px-4 hover:bg-secondary-green" on:click={() => saveIngredient()}>Add</button>
+        {/if}
       </div>
     </div>
     {:else if currentStep === 3}
@@ -435,32 +404,37 @@
       <div class="text-center py-4 bg-secondary-green">
         <h2 class="text-xl font-bold text-white">How is this dish prepared?</h2>
       </div>
-      <div class="flex flex-col gap-2 items-center">
+      <div class="flex flex-col gap-2 items-center mt-10">
       {#if RecipeData.steps.length === 0}
         <div class="flex justify-center">
           <h1 class="text-2xl font-poppins py-4 mb-0 mx-auto text-black">No steps added yet</h1>
         </div>
       {:else}
-        {#each RecipeData.expand.steps as step}
+        {#each RecipeData.expand.steps as step, index}
           <div class="flex justify-between border-b-2 border-black w-2/3">
-          <div class="flex gap-2">
-              <h1 class={`text-2xl font-poppins py-4 mb-0 mx-auto text-black`}>{step.stepNumber}</h1>
-
-          <div class="flex gap-2">
-            <input
+            <div class="flex gap-2 items-center w-2/3">
+              <span class="font-poppins text-xl p-4">{index + 1}.</span>
+              <textarea
+                bind:value={step.text}
+                class="border-gray-600 bg-primary-white font-poppins w-1/2 focus:ring-opacity-50 border-2 m-4 text-sm p-4 rounded-md focus:outline-none"
+                on:blur={() => saveStep(step)}
+              />
+              <input
               type="text"
-              bind:value={step.text}
-              class="border-gray-600 font-poppins  focus:ring-opacity-50 border-2 m-4 text-xl p-4 rounded-full text-center focus:outline-none"
-              on:blur={() => saveStep()}
-            />
-          </div>
-          <div class="flex gap-2"></div>
-          </div>
-          <div class="flex gap-2 justify-end">
-          <button on:click={() => deleteStep(step)}>
-            <img src={remove} alt="remove" class="w-6 h-6"/>
-          </button>
-          </div>
+              placeholder="Image URL ..."
+              bind:value={step.media}
+              class="border-2 border-gray-700 p-2 rounded-full w-full focus:border-primary-green focus:outline-none font-poppins bg-primary-brown text-xl placeholder-gray-700"
+              on:blur={() => saveStep(step)}
+              />
+              <div>
+                <img src={step.media ? step.media : recipe_placeholder} alt={step.text} class="w-[200px] h-[100px] object-cover rounded-3xl" />
+              </div>
+            </div>
+            <div class="flex gap-2 justify-end">
+              <button on:click={() => deleteStep(step)}>
+                <img src={remove} alt="remove" class="w-[30px]"/>
+              </button>
+            </div>
           </div>
         {/each}
       {/if}
@@ -471,8 +445,14 @@
           bind:value={newStep}
           class="border-2 border-gray-700 p-2 rounded-full w-full focus:border-primary-green focus:outline-none font-poppins bg-primary-brown text-xl placeholder-gray-700"
         />
+        <input
+          type="text"
+          placeholder="Image URL ..."
+          bind:value={newImageUrl}
+          class="border-2 border-gray-700 p-2 rounded-full w-full focus:border-primary-green focus:outline-none font-poppins bg-primary-brown text-xl placeholder-gray-700"
+        />
         {#if newStep}
-          <button class="bg-primary-green text-white rounded-3xl text-center px-4 hover:bg-secondary-green" on:click={() => saveStep()}>Add</button>
+          <button class="bg-primary-green text-white rounded-3xl text-center px-4 hover:bg-secondary-green" on:click={() => createStep()}>Add</button>
         {/if}
       </div>
     <!-- add ingredient button -->
@@ -484,55 +464,66 @@
       <div class="text-center py-4 bg-secondary-green">
         <h2 class="text-xl font-bold text-white">Ready to publish? Check details.</h2>
       </div>
-      <div class="px-4 pt-4">
-        <h2 class="text-2xl font-bold">{RecipeData.name}</h2>
-      </div>
-
-      <!-- Recipe Image -->
-      <img src={RecipeData.image} alt={RecipeData.name} class="w-full h-64 object-cover" />
-
-      <!-- Display entered recipe information for review -->
-      <div class="px-4">
-        <div class="grid grid-cols-3 gap-4 items-center">
-          <div class="font-bold">Ingredients</div>
-          <div class="col-span-2 font-bold text-middle">Amount</div>
-          {#if RecipeData.ingredients.length == 0}
-            <div class="flex justify-center">
-              <h1 class="text-2xl font-poppins py-4 mb-0 mx-auto text-black">No ingredients</h1>
-            </div>
-          {:else}
-            {#each RecipeData.expand.ingredients as ingredient, index}
-              <div>
-                <li class="list-disc list-inside">{ingredient.expand.ingredientId.name}</li>
-              </div>
-              <div class="col-span-2 text-middle">
-                <div class="flex items-center space-x-4">
-                {ingredient.amount} {ingredient.expand.ingredientId.expand.unit.name}
-                <!-- Add icons here as needed -->
-                  <!-- Icon SVG -->
-                </div>
-              </div>
-            {/each}
-          {/if}
+      <div class="flex flex-col w-2/3 mx-auto items-center">
+        <div class="px-4 pt-4 text-center">
+          <h2 class="text-2xl font-bold">{RecipeData.name}</h2>
         </div>
-      </div>
+        <!-- Recipe Image -->
+        <img src={RecipeData.image ? RecipeData.image : recipe_placeholder} alt={RecipeData.name} class="w-full h-64 object-cover rounded-3xl" />
 
-      <!-- Steps -->
-      <div class="px-4 my-4">
-        <h3 class="font-semibold text-lg mb-2">Steps</h3>
-        <ol class="list-decimal pl-5">
-          {#if RecipeData.steps.length == 0}
-            <div class="flex justify-center">
-              <h1 class="text-2xl font-poppins py-4 mb-0 mx-auto text-black">No steps</h1>
+        <!-- Display entered recipe information for review -->
+        <div class="flex w-full mt-10">
+          <div class="w-1/2">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="font-bold">Ingredients</div>
+              <div class="font-bold text-center">Amount</div>
+              {#if RecipeData.ingredients.length == 0}
+                <div class="flex justify-center col-span-2">
+                  <h1 class="text-md font-poppins py-4 mb-0 mx-auto text-black">No ingredients</h1>
+                </div>
+              {:else}
+                {#each RecipeData.expand.ingredients as ingredient, index}
+                  <div class="list-disc list-inside">
+                    {ingredient.expand.ingredientId.name}
+                  </div>
+                  <div class="text-middle text-center">
+                    {ingredient.amount} {ingredient.expand.ingredientId.expand.unit.name}
+                  </div>
+                {/each}
+              {/if}
             </div>
-          {:else}
-            {#each RecipeData.expand.steps as step, index}
-              {@html step.text}<br>
-            {/each}
-          {/if}
-        </ol>
+          </div>
+
+          <!-- Steps -->
+        <div class="px-4 w-1/2">
+          <h3 class="font-semibold text-lg mb-2 text-center">Steps</h3>
+          <ol class="list-decimal pl-5">
+            {#if RecipeData.steps.length == 0}
+              <div class="flex">
+                <h1 class="text-md font-poppins py-4 mb-0 mx-auto text-black">No steps</h1>
+              </div>
+            {:else}
+              {#each RecipeData.expand.steps as step, index}
+                <li class="mb-2">
+                {@html step.text}<br>
+                </li>
+              {/each}
+            {/if}
+          </ol>
+        </div>
+        </div>
+
+        
+        <!-- ... -->
       </div>
-      <!-- ... -->
+      
+
+      
+      
+
+
+
+     
     {/if}
       <!-- Navigation buttons -->
     <div class="flex w-1/2 justify-center mx-auto">
