@@ -297,7 +297,18 @@
         }
     }
 
-
+    function handleDragOver(event) {
+        event.preventDefault(); // This is necessary to allow a drop
+    }
+  
+    function handleDrop(event) {
+        event.preventDefault();
+        const sectionId = event.currentTarget.dataset.sectionId;
+        const ingredientId = event.dataTransfer.getData('text/plain');
+        // Call your method to assign the ingredient to the section
+        // console.log(`Assign ingredient ${ingredientId} to section ${sectionId}`);
+        assignIngredientToSection(ingredientId, sectionId);
+    }
 
     function handleNewIngredientClick() {
     // Get the input and button elements
@@ -312,6 +323,22 @@
             inputElement.focus();
         });
         }
+    }
+
+    function assignIngredientToSection(ingredientId, sectionId) {
+        fetch(`https://fit-itu.hop.sh/api/collections/ingredientInPantry/records/${ingredientId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                pantrySection: sectionId
+            })
+        })
+        .then(() => {
+            selectedSectionId = sectionId;
+            getSections(sectionId);
+        })
     }
 
     onMount(() => {
@@ -337,7 +364,12 @@
                     <div class="justify-start flex gap-2 w-auto">
                         {#each pantrySections as section}
                         {#if edit_pantry_id != section.id}
-                        <button
+                        <div
+                        on:dragover={handleDragOver}
+                        on:drop={handleDrop}
+                        data-section-id={section.id}
+                        >
+                            <button
                             on:click={() => selectSection(section.id)}
                             class={`${selectedSectionId === section.id ? 'bg-primary-green flex text-white border-2 hover:cursor-default hover:bg-primary-green border-primary-green' : 'bg-primary-white text-black'} border-black items-center hover:bg-secondary-green hover:text-white hover:border-primary-green text-xs font-semibold rounded-2xl text-center w-auto h-7 border-2`}>
                             <div class="ml-5 mr-5 text-sm">
@@ -360,7 +392,9 @@
                                 {/if}
                             </button>
                             {/if}
-                        </button>
+                            </button>
+                        </div>
+
                         {:else}
                             <div>
                                 <input 

@@ -6,6 +6,9 @@
 
     let ingredient_amount_null = false;
 
+    function handleDragStart(event) {
+        event.dataTransfer.setData('text/plain', ingredient.id);
+    }
 
     async function saveAmount()
     {
@@ -80,7 +83,7 @@
     }
 </script>
 
-<div class="w-[350px] h-[100px] bg-cover flex rounded-2xl overflow-hidden">
+<div class="w-[350px] h-[100px] bg-cover flex rounded-2xl overflow-hidden" draggable="true" on:dragstart={handleDragStart}>
         <div class="flex w-[100px] bg-cover h-full" style=" background-image: url({ingredient.expand.ingredient.imageUrl})">
         </div>
         <div class="border-2 rounded-r-2xl border-primary-green bg-primary-green text-white text-center w-[250px]">
