@@ -335,6 +335,5 @@ async function createAndRetrieveNewRecipe() {
               <button on:click={closeModal} class="bg-red-500 text-white px-6 py-2 rounded-full font-bold">Close</button>
           </div>
       </div>
-
     {/if}
 </SlideUpOverlay>

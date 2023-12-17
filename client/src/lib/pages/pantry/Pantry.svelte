@@ -1,23 +1,28 @@
+<!-- 
+                Pantry.svelte
+             Veronika Nevarilova
+                FIT ITU 2023
+-->
+
 <script>
-    import edit_icon from '../../../assets/edit_icon.svg';
-    import edit_white from '../../../assets/edit_white.svg';
     import Ingredient from './components/Ingredient.svelte';
     import Sidebar from '../../components/SideBar.svelte';
-    import SlideUpOverlay from '../../components/SlideUpOverlay.svelte';
-    import menu_icon from '../../../assets/menu_icon.svg';
-    import close_icon from '../../../assets/close_black.svg';
     import { onDestroy, onMount } from 'svelte';
     import {showShoppingList, reloadPantry} from '../../../store.js';
+    import {fade} from 'svelte/transition';
+
+    // icons
+    import lightbulb from '../../../assets/lightbulb.svg';
+    import camera from '../../../assets/camera_gray.svg';
+    import edit_white from '../../../assets/edit_white.svg';
+    import close_icon from '../../../assets/close_black.svg';
     import up_arrow from '../../../assets/uparrow.svg';
     import trash_bin_icon from '../../../assets/trashbin_white.svg';
     import new_icon from '../../../assets/new_white.svg';
-    import new_icon_gray from '../../../assets/new_gray.svg';
     import save_icon from '../../../assets/save.svg';
     import minus_icon from '../../../assets/minus.svg';
     import trashbin_red from '../../../assets/trashbin_light_red.svg';
     import save_white from '../../../assets/save_white.svg';
-    import { fly, fade, scale } from 'svelte/transition';
-    import camera from '../../../assets/camera_gray.svg';
 
     let textField = '';
     let pantrySections = [];
@@ -41,6 +46,7 @@
       url: null,
     };
     let newIngredientNameNull = false;
+    let tiphidden = true;
 
 
     function getSections(selectedId){
@@ -59,12 +65,25 @@
                         selectedSectionId = pantrySections[0].id;
                         red_trashbin = false;
                     }
+                    const specificId = "htbj55au87v9quv";  // id of Unassigned section
+
+                    // Najít index sekce s konkrétním ID
+                    const index = pantrySections.findIndex(section => section.id === specificId);
+                    console.log(pantrySections);
+                    if (index > -1) {
+                        // Make section unassigned the first
+                        const [sectionToMove] = pantrySections.splice(index, 1);
+                        pantrySections = [sectionToMove, ...pantrySections];
+                    }
+                    console.log(pantrySections);
                     ingredients = await getIngredient(selectedSectionId);                    
                 }
             })
             .catch(err => {
                 console.error(err);
             });
+
+
     }
 
     async function getIngredient(sectionId){
@@ -411,7 +430,7 @@
                             <div class="ml-5 mr-5 text-sm">
                                 {section.name}
                             </div>
-                            {#if selectedSectionId == section.id}
+                            {#if selectedSectionId == section.id && selectedSectionId != "htbj55au87v9quv"}
                             <button class=" mr-1 bg-transparent flex justify-end h-5 w-5 hover:bg-secondary-green rounded-3xl" on:click={() => editPantry()}>
                                 <img src={edit_white} alt="Edit">
                             </button>
@@ -475,7 +494,21 @@
                         </button>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 pt-10 gap-x-20">
+                <div class="italic mt-2 flex items-center">
+                    <button
+                        on:mouseover={() => tiphidden = false}
+                        on:focus={() => tiphidden = false}
+                        on:mouseleave={() => tiphidden = true}
+                        class="p-1 bg-transparent flex justify-end h-7 w-7 hover:cursor-default hover:bg-primary-brown rounded-3xl">
+                        <img src={lightbulb} alt="tip">
+                    </button>
+                    {#if !tiphidden}
+                    <p in:fade={{ duration: 300 }}>
+                    Drag ingredient by its image onto a section to move the ingredient to it.
+                    </p>
+                    {/if}
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 pt-5 gap-x-20">
                     {#each ingredients as ingredient, index}
                                 <Ingredient ingredient={ingredient} />
                     {/each}
