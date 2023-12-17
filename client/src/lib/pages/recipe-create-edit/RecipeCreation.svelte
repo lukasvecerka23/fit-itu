@@ -3,8 +3,6 @@
                 Jachym Dolezal
                 FIT ITU 2023
 -->
-
-
 <script>
     import { onMount } from 'svelte';
     import { showShoppingList } from '../../../store.js';
@@ -43,7 +41,6 @@
     }
 
 
-    // params.id will contain the ID from the URL
     let currentStep = 1;
   
     function goToNextStep() {
@@ -517,18 +514,7 @@
           </ol>
         </div>
         </div>
-
-        
-        <!-- ... -->
       </div>
-      
-
-      
-      
-
-
-
-     
     {/if}
       <!-- Navigation buttons -->
     <div class="flex w-1/2 justify-center mx-auto">
@@ -541,7 +527,6 @@
             <button class="bg-primary-red text-white px-6 py-2 rounded-full font-bold" on:click={handleCancel}>Cancel</button>
           {/if}
         </div>
-        <!-- Title showing progress in the format n/m -->
         <div class="font-bold">
           Step {currentStep} / 4
         </div>

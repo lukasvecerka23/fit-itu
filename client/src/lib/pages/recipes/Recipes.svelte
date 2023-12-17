@@ -152,7 +152,7 @@
 
         if (existingItem) {
             // Ingredient exists, update the amount
-            const updateUrl = `${shoppingListUrl}/${existingItem.id}`; // Assuming the item's ID is in `existingItem.id`
+            const updateUrl = `${shoppingListUrl}/${existingItem.id}`;
             const updatedAmount = (amountToAdd - existingItem.amount) + existingItem.amount; // Add only the difference to the existing amount
 
             const patchResponse = await fetch(updateUrl, {
@@ -229,11 +229,9 @@ async function createAndRetrieveNewRecipe() {
         throw new Error(`HTTP error! Status: ${postResponse.status}`);
       }
 
-      // Assuming the POST request returns the new recipe object with an ID
       let newRecipe = await postResponse.json();
       console.log('Created new recipe with ID:', newRecipe.id);
 
-      // GET request to retrieve the new recipe
       let getResponse = await fetch(`https://fit-itu.hop.sh/api/collections/recipes/records/${newRecipe.id}`);
 
       if (!getResponse.ok) {
@@ -243,7 +241,7 @@ async function createAndRetrieveNewRecipe() {
       let retrievedRecipe = await getResponse.json();
       console.log('Retrieved new recipe:', retrievedRecipe);
 
-      return retrievedRecipe; // Return the retrieved recipe object
+      return retrievedRecipe;
 
     } catch (error) {
       console.error('Error creating and retrieving new recipe:', error);
@@ -257,7 +255,6 @@ async function createAndRetrieveNewRecipe() {
   }
 
   async function handleCookRecipeClick(recipeid) {
-    // const newRecipe = await createAndRetrieveNewRecipe();
     if (recipeid) {
       navigate(`/recipeinteractive/${recipeid}`);
     }
@@ -335,7 +332,6 @@ async function createAndRetrieveNewRecipe() {
                   <div class="text-middle">
                     <div class="flex items-center space-x-4">
                     {ingredient.amount} {ingredient.expand.ingredientId.expand.unit.name}
-                    <!-- Add icons here as needed -->
                     {#if missingIngredients.some(missingIngredient => missingIngredient.expand.ingredientId.name === ingredient.expand.ingredientId.name)}
                     <img src={close_icon_black} alt="arrow" class="w-6 h-6" />
                     <!-- svelte-ignore a11y-click-events-have-key-events -->

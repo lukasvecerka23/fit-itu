@@ -12,7 +12,6 @@
     import Recipes from '../recipes/Recipes.svelte';
     import Recipe from '../../components/Recipe.svelte';
     import recipe_placeholder from '../../../assets/recipe_placeholder.jpg';
-    // import recipe_placeholder from '../../../assets/recipe-placeholder.jpg';
 
 
     let currentStep = 1;
@@ -23,7 +22,6 @@
     export let id
 
 
-    // go to next step
     function goToNextStep() {
         if (currentStep < recipeSteps.length) {
         currentStep += 1;
@@ -121,7 +119,6 @@
         currentStepData = recipeSteps[currentStep-1]
         totalsteps = recipeSteps.length;
         console.log("currentStepData",currentStepData);
-        // loading = true;
         console.log("data",RecipeData);
     }
     onMount(() => {
