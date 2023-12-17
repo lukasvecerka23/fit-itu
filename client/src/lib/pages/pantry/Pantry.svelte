@@ -7,7 +7,7 @@
     import menu_icon from '../../../assets/menu_icon.svg';
     import close_icon from '../../../assets/close_black.svg';
     import { onDestroy, onMount } from 'svelte';
-    import {showShoppingList} from '../../../store.js';
+    import {showShoppingList, reloadPantry} from '../../../store.js';
     import up_arrow from '../../../assets/uparrow.svg';
     import trash_bin_icon from '../../../assets/trashbin_white.svg';
     import new_icon from '../../../assets/new_white.svg';
@@ -294,6 +294,12 @@
         }
     }
 
+    $: if($reloadPantry)
+    {
+        getSections(selectedSectionId);
+        reloadPantry.set(false);
+    }    
+    
     function handleDragOver(event) {
         event.preventDefault();
     }

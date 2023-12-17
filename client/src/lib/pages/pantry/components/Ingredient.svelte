@@ -2,6 +2,7 @@
     import add_icon from '../../../../assets/new_white.svg';
     import minus_icon from '../../../../assets/minus.svg';
     import delete_icon from '../../../../assets/trashbin_white.svg';
+    import {reloadPantry} from '../../../../store.js';
     export let ingredient = {};
 
     let ingredient_amount_null = false;
@@ -80,6 +81,7 @@
             const message = `An error has occured: ${resp.status}`;
             throw new Error(message);
         }
+        reloadPantry.set(true);
     }
 </script>
 
