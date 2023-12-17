@@ -10,6 +10,7 @@
     import plus_icon from '../../../assets/plus_button.svg'
     import {navigate} from 'svelte-routing';
     import recipe_placeholder from '../../../assets/recipe_placeholder.jpg';
+    import frying_pan from '../../../assets/frying_pan.svg';
     // You can add more script code here if needed
     // Fetch pantry sections and set the first one as selected
     let recipes = [];
@@ -219,6 +220,13 @@ async function createAndRetrieveNewRecipe() {
     }
   }
 
+  async function handleCookRecipeClick() {
+    const newRecipe = await createAndRetrieveNewRecipe();
+    if (newRecipe && newRecipe.id) {
+      navigate(`/recipeinteractive/${newRecipe.id}`);
+    }
+  }
+
   async function handleEditRecipe() {
     navigate(`/createrecipe/${selectedRecipe.id}`);
   }
@@ -246,7 +254,14 @@ async function createAndRetrieveNewRecipe() {
       <img src={plus_icon} alt="plus icon" class="w-20 h-20" />
     </button>
   </div>
+  <div class="fixed bottom-20 right-0 mb-4 mr-4">
+    <button on:click={handleCookRecipeClick} class="focus:outline-none">
+      <img src={frying_pan} alt="cook crecipe" class="w-20 h-20" />
+    </button>
+  </div>
 </div>
+
+
 
 
 <SlideUpOverlay bind:show={showModal} height="h-screen pt-10">
@@ -325,6 +340,6 @@ async function createAndRetrieveNewRecipe() {
               <button on:click={closeModal} class="bg-red-500 text-white px-6 py-2 rounded-full font-bold">Close</button>
           </div>
       </div>
-      
+
     {/if}
 </SlideUpOverlay>

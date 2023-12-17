@@ -6,6 +6,7 @@
     import Recipes from '../pages/recipes/Recipes.svelte';
     import Pantry from '../pages/pantry/Pantry.svelte';
     import RecipeCreation from '../pages/recipe-create-edit/RecipeCreation.svelte';
+    import RecipeInteractive from '../pages/recipe-interactive/RecipeInteractive.svelte';
 </script>
   
 <Router>
@@ -14,4 +15,5 @@
     <Route path="recipes" component={Recipes} />
     <Route path="createrecipe/:id" component={RecipeCreation} />
     <Route path="pantry" component={Pantry} />
+    <Route path="recipeinteractive/:id" component={RecipeInteractive} />
 </Router>
