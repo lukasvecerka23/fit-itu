@@ -8,6 +8,7 @@
     let RecipeData = null;
     let recipeSteps = [];
     let currentStepData = null;
+    let totalsteps = 0;
     export let id
 
 
@@ -38,6 +39,7 @@
         RecipeData = await response.json();
         recipeSteps = RecipeData.expand.steps;
         currentStepData = recipeSteps[currentStep-1]
+        totalsteps = recipeSteps.length;
         console.log("currentStepData",currentStepData);
         // loading = true;
         console.log("data",RecipeData);
