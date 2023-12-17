@@ -57,6 +57,7 @@
                     } else 
                     {
                         selectedSectionId = pantrySections[0].id;
+                        red_trashbin = false;
                     }
                     ingredients = await getIngredient(selectedSectionId);                    
                 }
@@ -78,6 +79,7 @@
     async function selectSection(sectionId) {
         selectedSectionId = sectionId;
         ingredients = await getIngredient(sectionId);
+        red_trashbin = false;
         searchQuery = null;
     }
 
@@ -473,73 +475,72 @@
                         </button>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 gap-4 pt-10 justify-left">
-                    {#each ingredients as ingredient}
-                        <Ingredient ingredient={ingredient} />
+                <div class="w-full columns-1 md:columns-1 lg:columns-1 xl:columns-2 gap-4 pt-10">
+                    {#each ingredients as ingredient, index}
+                                <Ingredient ingredient={ingredient} />
                     {/each}
-
-
-                    <div class="w-[350px] h-[100px] bg-cover flex rounded-2xl ">
-                        <div class="w-[100px] bg-white rounded-l-2xl">
-                            <img src={camera} alt="Save"/>
-                        </div>
-                        <div class="border-2 rounded-r-2xl border-primary-green bg-primary-green text-white text-center w-[250px]">
-                            <div class="items-center text-center">
-                                <div class="flex justify-between mt-1 relative">
-                                    <input
-                                        id="newIngredient"
-                                        type="text"
-                                        placeholder="Search for ingredient..."
-                                        bind:value={searchQuery}
-                                        on:input={() => filterIngredients(searchQuery)}
-                                        class={`m-2 text-black border-2 text-s  p-2 h-7 rounded-full w-full focus:border-black focus:outline-none font-poppins placeholder-gray-700 ${newIngredientNameNull? 'border-red-500' : ''}`}
-                                    />
-                                    {#if searchQuery && filteredIngredients.length}
-                                        <div class="absolute border-primary-white flex flex-col bg-primary-white mb-2 bottom-full z-10 w-full rounded-3xl border font-poppins">
-                                        {#each filteredIngredients as ingredient}
-                                            <button
-                                            on:click={() => selectIngredient(ingredient)}
-                                            class="p-2 hover:bg-secondary-green hover:text-white cursor-pointer rounded-3xl text-black text-left"
-                                            in:fade={{ delay: 100 * (filteredIngredients.indexOf(ingredient)), duration: 300 }}
-                                            >
-                                            {ingredient.name}
-                                            </button>
-                                        {/each}
-                                        </div>
-                                    {/if}
-                                </div>
-                                <div class="pt-4 flex h-2/3 w-auto justify-center items-center">
-                                    <button 
-                                        on:click={() => changeIngredientAmount("-")}
-                                        class="flex h-7 w-7 p-1 mr-1 rounded-3xl bg-primary-green hover:bg-secondary-green">
-                                        <img src={minus_icon} alt="Edit">
+                    <div class={`w-[400px] h-[100px] bg-cover flex justify-end rounded-2xl `}>
+                            <div class="w-[100px] bg-white rounded-l-2xl">
+                                <img src={camera} alt="Save"/>
+                            </div>
+                            <div class="border-2 rounded-r-2xl border-primary-green bg-primary-green text-white text-center w-[300px]">
+                                <div class="items-center text-center">
+                                    <div class="flex justify-between mt-1 relative">
+                                        <input
+                                            id="newIngredient"
+                                            type="text"
+                                            placeholder="Search for ingredient..."
+                                            bind:value={searchQuery}
+                                            on:input={() => filterIngredients(searchQuery)}
+                                            class={`m-2 text-black border-2 text-s  p-2 h-7 rounded-full w-full focus:border-black focus:outline-none font-poppins placeholder-gray-700 ${newIngredientNameNull? 'border-red-500' : ''}`}
+                                        />
+                                        {#if searchQuery && filteredIngredients.length}
+                                            <div class="absolute border-primary-white flex flex-col bg-primary-white mb-2 bottom-full z-10 w-full rounded-3xl border font-poppins">
+                                            {#each filteredIngredients as ingredient}
+                                                <button
+                                                on:click={() => selectIngredient(ingredient)}
+                                                class="p-2 hover:bg-secondary-green hover:text-white cursor-pointer rounded-3xl text-black text-left"
+                                                in:fade={{ delay: 100 * (filteredIngredients.indexOf(ingredient)), duration: 300 }}
+                                                >
+                                                {ingredient.name}
+                                                </button>
+                                            {/each}
+                                            </div>
+                                        {/if}
+                                    </div>
+                                    <div class="pt-4 flex h-2/3 w-auto justify-center items-center">
+                                        <button 
+                                            on:click={() => changeIngredientAmount("-")}
+                                            class="flex h-7 w-7 p-1 mr-1 rounded-3xl bg-primary-green hover:bg-secondary-green">
+                                            <img src={minus_icon} alt="Edit">
+                                        </button>
+                                        <input 
+                                            bind:value={newIngredient.amount}
+                                            type="number" min=0 max={Number.MAX_SAFE_INTEGER} id="amount" class={`px-3 w-1/3 h-7 bg-transparent border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-700 `} placeholder="Amount"/>
+                                            <p class="text-sm flexrounded-2xl pl-2 pr-2">
+                                                {#if newIngredient.unit != null}
+                                                    {newIngredient.unit}
+                                                {:else}
+                                                    unit
+                                                {/if}
+                                            </p>
+                                        <button 
+                                            on:click={() => changeIngredientAmount("+")}
+                                            class="flex  h-7 w-7 rounded-3xl ml-1 bg-primary-green hover:bg-secondary-green">
+                                            <img src={new_icon} alt="Edit">
                                     </button>
-                                    <input 
-                                        bind:value={newIngredient.amount}
-                                        type="number" min=0 max={Number.MAX_SAFE_INTEGER} id="amount" class={`px-3 w-1/3 h-7 bg-transparent border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-700 `} placeholder="Amount"/>
-                                        <p class="text-sm flexrounded-2xl pl-2 pr-2">
-                                            {#if newIngredient.unit != null}
-                                                {newIngredient.unit}
-                                            {:else}
-                                                unit
-                                            {/if}
-                                        </p>
-                                    <button 
-                                        on:click={() => changeIngredientAmount("+")}
-                                        class="flex  h-7 w-7 rounded-3xl ml-1 bg-primary-green hover:bg-secondary-green">
-                                        <img src={new_icon} alt="Edit">
-                                </button>
-                                <button
-                                    on:click={() => addIngredient()}
-                                    class="p-1 bg-transparent flex justify-end h-7 w-7 hover:bg-secondary-green rounded-2xl">
-                                    <img src={save_white} alt="Save">
-                                </button>
+                                    <button
+                                        on:click={() => addIngredient()}
+                                        class="p-1 bg-transparent flex justify-end h-7 w-7 hover:bg-secondary-green rounded-2xl">
+                                        <img src={save_white} alt="Save">
+                                    </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
 
-                </div>
+
                     
                     
                 </div>
