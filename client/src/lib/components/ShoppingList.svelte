@@ -17,6 +17,7 @@
       ingredient: null,
       amount: 0,
     };
+    var unassignedPantry = "htbj55au87v9quv";
 
     function getIngredients(){
         fetch('https://fit-itu.hop.sh/api/collections/ingredientInShoppingList/records?expand=ingredient,ingredient.unit')
@@ -43,8 +44,57 @@
         });
     }
 
-    function tickIngredient(ingredient)
+    async function updateIngredientInPantry(ingredient)
     {
+      var ingredientInPantry = await checkInPantry(ingredient);
+      if (ingredientInPantry != null){
+        if (!ingredient.ticked){
+          await fetch(`https://fit-itu.hop.sh/api/collections/ingredientInPantry/records/${ingredientInPantry.id}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              "amount": ingredientInPantry.amount + ingredient.amount
+            })
+          })
+        } else if (ingredientInPantry.amount > ingredient.amount){
+          await fetch(`https://fit-itu.hop.sh/api/collections/ingredientInPantry/records/${ingredientInPantry.id}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              "amount": ingredientInPantry.amount - ingredient.amount
+            })
+          })
+        } else {
+          await fetch(`https://fit-itu.hop.sh/api/collections/ingredientInPantry/records/${ingredientInPantry.id}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+        }
+      } else {
+        await fetch('https://fit-itu.hop.sh/api/collections/ingredientInPantry/records', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            "userId": "uvh48ynbmnnmydx",
+            "ingredient": ingredient.ingredient,
+            "amount": ingredient.amount,
+            "pantrySection": unassignedPantry
+          })
+        })
+      }
+    }
+
+    async function tickIngredient(ingredient)
+    {
+      await updateIngredientInPantry(ingredient);
       fetch(`https://fit-itu.hop.sh/api/collections/ingredientInShoppingList/records/${ingredient.id}`, {
         method: 'PATCH',
         headers: {
@@ -57,6 +107,24 @@
       .then((res) => {
         getIngredients();
       })
+    }
+
+    async function checkInPantry(ingredient)
+    {
+      const params = new URLSearchParams({
+            filter: `(ingredient='${ingredient.ingredient}' && pantrySection='${unassignedPantry}')`,
+        });
+      const resp = await fetch(`https://fit-itu.hop.sh/api/collections/ingredientInPantry/records?${params}`);
+      if (resp.ok){
+        const data = await resp.json();
+        if (data.items.length > 0){
+          return data.items[0];
+        } else {
+          return null;
+        }
+      } else {
+        return null;
+      }
     }
 
     function deleteIngredient(ingredient)
@@ -118,7 +186,9 @@
     {
       const fetches = [];
       for (let i = 0; i < ingredients.length; i++) {
+
         if (!ingredients[i].ticked) {
+          updateIngredientInPantry(ingredients[i]);
           const res = fetch(`https://fit-itu.hop.sh/api/collections/ingredientInShoppingList/records/${ingredients[i].id}`, {
             method: 'PATCH',
             headers: {
@@ -145,6 +215,7 @@
 
       for (let i = 0; i < ingredients.length; i++) {
         if (ingredients[i].ticked) {
+          updateIngredientInPantry(ingredients[i]);
           const res = fetch(`https://fit-itu.hop.sh/api/collections/ingredientInShoppingList/records/${ingredients[i].id}`, {
             method: 'PATCH',
             headers: {
@@ -279,7 +350,7 @@
           {#each ingredients as ingredient}
             <div class="flex justify-between border-b-2 border-black w-2/3">
               <div class="flex gap-2 w-1/2 text-left">
-                <button on:click={() => tickIngredient(ingredient)}>
+                <button on:click={async () => await tickIngredient(ingredient)}>
                   <img src={ingredient.ticked ? circle_ticked : circle} alt="Ingredient circle" class="w-[30px]"/>
                 </button>
                 <h1 class={`text-2xl font-poppins py-4 ${ingredient.ticked ? 'text-gray-500 line-through' : 'text-black'} ove`}>{ingredient.expand.ingredient.name}</h1>
