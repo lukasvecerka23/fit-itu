@@ -10,6 +10,8 @@
     import {navigate} from 'svelte-routing';
     import recipe_placeholder from '../../../assets/recipe_placeholder.jpg';
     import { onMount } from 'svelte';
+    import {reloadShoppingList, showShoppingList} from '../../../store.js';
+    import up_arrow from '../../../assets/uparrow.svg';
 
 
     let recipes = [];
@@ -89,13 +91,12 @@
 
       selectedRecipeData = await response.json();
 
-      // Create a map of pantry ingredients for easy lookup
-      const pantryIngredientsMap = new Map(ingredientsInPantry.map(item => [item.expand.ingredient.name, item]));
+      const mergedIngredients = mergeIngredients();
 
       // Determine missing ingredients
       if (selectedRecipeData && selectedRecipeData.expand && selectedRecipeData.expand.ingredients){
       missingIngredients = selectedRecipeData.expand.ingredients.filter(ingredient => {
-        const pantryItem = pantryIngredientsMap.get(ingredient.expand.ingredientId.name);
+        const pantryItem = mergedIngredients[ingredient.ingredientId];
         return !pantryItem || pantryItem.amount < ingredient.amount;
       });
       }
@@ -198,7 +199,9 @@
         const shoppingListItem = shoppingListIngredientsMap.get(ingredient.expand.ingredientId.name);
         return !shoppingListItem || shoppingListItem.amount < ingredient.amount;
       });
-}
+    
+      reloadShoppingList.set(true);
+  }
 
 async function createAndRetrieveNewRecipe() {
     try {
@@ -287,6 +290,11 @@ async function createAndRetrieveNewRecipe() {
       <img src={plus_icon} alt="plus icon" class="w-20 h-20" />
     </button>
   </div>
+  <div class="fixed inset-x-0 bottom-0 flex justify-center items-end">
+    <button class="w-1/2 bg-primary-brown text-black rounded-t-xl flex justify-center" on:click={() => showShoppingList.set(true)}>
+        <img src={up_arrow} alt="Popis obrázku" class="w-[30px]">
+    </button>
+</div>
 </div>
 
 
@@ -328,13 +336,13 @@ async function createAndRetrieveNewRecipe() {
                     <!-- svelte-ignore a11y-no-static-element-interactions -->
                     {#if missingIngredientsShoppingList.some(missingIngredient => missingIngredient.expand.ingredientId.name === ingredient.expand.ingredientId.name)}
                     <button class="w-6 h-6" on:click={() => {addIngredientToShoppingList(ingredient);}}>
-                    <img src={basket_to_buy} alt="ingredient not in shopping list"/>
+                      <img src={basket_to_buy} alt="ingredient not in shopping list"/>
                     </button>
                     {:else}
-                    <img src={basket_in_shopping_list} alt="ingredient in shopping list"  class="w-6 h-6"/>
+                      <img src={basket_in_shopping_list} alt="ingredient in shopping list"  class="w-6 h-6"/>
                     {/if}
                     {:else}
-                    <img src={circle_checked} alt="arrow" class="w-6 h-6" />
+                      <img src={circle_checked} alt="arrow" class="w-6 h-6" />
                     {/if}
                       <!-- Icon SVG -->
                     </div>

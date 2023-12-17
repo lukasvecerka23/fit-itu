@@ -1,6 +1,6 @@
 <script>
     import { onMount } from 'svelte';
-    import { showShoppingList } from '../../store.js';
+    import { showShoppingList, reloadShoppingList, reloadPantry } from '../../store.js';
     import { fly, fade, scale } from 'svelte/transition';
     import circle from '../../assets/circle.svg';
     import circle_ticked from '../../assets/circle_checked.svg';
@@ -75,7 +75,7 @@
             }
           })
         }
-      } else {
+      } else if (!ingredient.ticked) {
         await fetch('https://fit-itu.hop.sh/api/collections/ingredientInPantry/records', {
           method: 'POST',
           headers: {
@@ -105,6 +105,7 @@
       })   
       .then((res) => {
         getIngredients();
+        reloadPantry.set(true);
       })
     }
 
@@ -149,9 +150,6 @@
             'Content-Type': 'application/json'
           }
         })
-        .then((res) => {
-          console.log(res);
-        })
         fetches.push(res);
       }
       Promise.all(fetches).then(() => {
@@ -169,9 +167,6 @@
             headers: {
               'Content-Type': 'application/json'
             }
-          })   
-          .then((res) => {
-            console.log(res);
           })
           fetches.push(res);
         }
@@ -196,15 +191,13 @@
             body: JSON.stringify({
               "ticked": true
             })
-          })   
-          .then((res) => {
-            console.log(res);  
           })
           fetches.push(res);
         }
       }
       Promise.all(fetches).then(() => {
         getIngredients();
+        reloadPantry.set(true);
       })
     }
 
@@ -223,15 +216,13 @@
             body: JSON.stringify({
               "ticked": false
             })
-          })   
-          .then((res) => {
-            console.log(res);  
           })
           fetches.push(res);
         }
       }
       Promise.all(fetches).then(() => {
         getIngredients();
+        reloadPantry.set(true);
       })
     }
 
@@ -336,6 +327,11 @@
     $: allTicked = ingredients.every(item => item.ticked);
 
     $: selectedIngredient = searchQuery ? selectedIngredient : null;
+
+    $: if ($reloadShoppingList) {
+      getIngredients();
+      reloadShoppingList.set(false);
+    }
 </script>
 
 {#if $showShoppingList}

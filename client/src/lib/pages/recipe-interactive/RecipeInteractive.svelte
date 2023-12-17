@@ -6,6 +6,7 @@
     import SideBar from '../../components/SideBar.svelte';
     import Recipes from '../recipes/Recipes.svelte';
     import Recipe from '../../components/Recipe.svelte';
+    import recipe_placeholder from '../../../assets/recipe_placeholder.jpg';
     // import recipe_placeholder from '../../../assets/recipe-placeholder.jpg';
 
 
@@ -153,8 +154,8 @@
     <div class="bg-black w-[2px]"></div>
     <div class="flex-col w-4/6 justify-center">
         <div class="flex h-4/6 items-center justify-center text-end">
-            <div class="h-[400px] w-[300px] rounded-3xl overflow-hidden bg-cover" style="background-image: url({currentStepData.media})">
-
+            <div class="h-[400px] w-[300px] rounded-3xl overflow-hidden">
+                <img src={currentStepData.media ? currentStepData.media : recipe_placeholder} alt="recipe" class="w-full h-full object-cover"/>
             </div>
         </div>
         <p class="text-center w-full text-3xl">{@html currentStepData.text}</p>
