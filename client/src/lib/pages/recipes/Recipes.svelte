@@ -9,6 +9,7 @@
     import basket_in_shopping_list from '../../../assets/basket_in_shopping_list.svg';
     import plus_icon from '../../../assets/plus_button.svg'
     import {navigate} from 'svelte-routing';
+    import recipe_placeholder from '../../../assets/recipe_placeholder.jpg';
     // You can add more script code here if needed
     // Fetch pantry sections and set the first one as selected
     let recipes = [];
@@ -228,12 +229,13 @@ async function createAndRetrieveNewRecipe() {
 <div class="flex w-full">
   <Sidebar />
   <div class="h-screen w-full bg-primary-white overflow-auto">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 p-2">
+    <h1 class="text-4xl font-bold p-4 text-center">Recipes</h1>
+    <div class="columns-1 md:columns-2 lg:columns-3 xl:columns-5 gap-6 p-2">
       {#each recipes as recipe}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <div class="rounded-lg cursor-pointer" on:click={() => openModal(recipe)}>
-          <Recipe name={recipe.name} description={recipe.description} imageurl={recipe.image}/>
+        <div class="rounded-lg cursor-pointer py-2" on:click={() => openModal(recipe)}>
+          <Recipe name={recipe.name} description={recipe.description} imageurl={recipe.image ? recipe.image : recipe_placeholder}/>
         </div>
       {/each}
     </div>
