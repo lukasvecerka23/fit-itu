@@ -1,3 +1,9 @@
+<!-- 
+                SideBar.svelte
+                Jachym Dolezal
+                FIT ITU 2023
+-->
+
 <script>
     import NavButton from "./NavButton.svelte";
     import RecipeLogo from "../../assets/recipe-book.svg";

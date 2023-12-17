@@ -1,3 +1,8 @@
+<!-- 
+                RecipeInteractive.svelte
+                Jachym Dolezal
+                FIT ITU 2023
+-->
 <script>
     import { Link } from 'svelte-routing';
     import { navigate } from 'svelte-routing';

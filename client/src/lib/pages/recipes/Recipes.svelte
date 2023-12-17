@@ -1,3 +1,9 @@
+<!-- 
+                Recipes.svelte
+                Jachym Dolezal
+                FIT ITU 2023
+-->
+
 <script>
     import Sidebar from '../../components/SideBar.svelte';
     import Recipe from '../../components/Recipe.svelte';
