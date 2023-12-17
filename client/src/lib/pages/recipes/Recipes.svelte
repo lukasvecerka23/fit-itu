@@ -2,7 +2,6 @@
     import Sidebar from '../../components/SideBar.svelte';
     import Recipe from '../../components/Recipe.svelte';
     import SlideUpOverlay from '../../components/SlideUpOverlay.svelte';
-    import { showShoppingList } from '../../../store';
     import circle_checked from '../../../assets/circle_checked.svg';
     import close_icon_black from '../../../assets/close_icon_black.svg';
     import basket_to_buy from '../../../assets/basket_to_buy.svg';
@@ -10,10 +9,9 @@
     import plus_icon from '../../../assets/plus_button.svg'
     import {navigate} from 'svelte-routing';
     import recipe_placeholder from '../../../assets/recipe_placeholder.jpg';
-    import frying_pan from '../../../assets/frying_pan.svg';
     import { onMount } from 'svelte';
-    // You can add more script code here if needed
-    // Fetch pantry sections and set the first one as selected
+
+
     let recipes = [];
     let showModal = false;
     let selectedRecipe = null;
@@ -23,6 +21,7 @@
     let ingredients = [];
     let loading = false;
     let ingredientsInPantry = [];
+    let sortedRecipes = [];
 
     function mergeIngredients(){
       return ingredientsInPantry.reduce((acc, item) => {
@@ -41,7 +40,7 @@
         .then(res => res.json())
         .then(data => {
             recipes = data.items;
-            console.log(recipes);
+            getAndSortRecipes();
         })
         .catch(err => {
             console.error(err);
@@ -59,15 +58,15 @@
         });
     }
 
-    async function getAndSortRecipes() {
-        const recipes = await fetchRecipes();
+    function getAndSortRecipes() {
+      const ingredients = mergeIngredients();
 
       // Score each recipe based on the amount of ingredients the user has
       recipes.forEach(recipe => {
         let score = 0;
         recipe.ingredients.forEach(ingredient => {
           // Check if the user has the ingredient and enough of it
-          if (consolidatedIngredients[ingredient.name] && consolidatedIngredients[ingredient.name] >= ingredient.amount) {
+          if (ingredients[ingredient.name] && ingredients[ingredient.name] >= ingredient.amount) {
             score++;
           }
         });
@@ -77,13 +76,8 @@
       // Sort recipes based on the score in descending order
       recipes.sort((a, b) => b.score - a.score);
 
-      return recipes;
+      sortedRecipes = recipes;
     }
-
-    getAndSortRecipes().then(sortedRecipes => {
-      // Use the sorted recipes as needed
-      console.log(sortedRecipes);
-    });
 
     async function openModal(recipe) {
       loading = true;
@@ -104,6 +98,8 @@
         const pantryItem = pantryIngredientsMap.get(ingredient.expand.ingredientId.name);
         return !pantryItem || pantryItem.amount < ingredient.amount;
       });
+      loading = false;
+      showModal = true;
       }
 
 
@@ -265,6 +261,8 @@ async function createAndRetrieveNewRecipe() {
 
   onMount(() => {
     getRecipes();
+    getIngredientsInPantry();
+
   });
 
 
@@ -275,7 +273,7 @@ async function createAndRetrieveNewRecipe() {
   <div class="h-screen w-full bg-primary-white overflow-auto">
     <h1 class="text-4xl font-bold p-4 text-center">Recipes</h1>
     <div class="columns-1 md:columns-2 lg:columns-3 xl:columns-5 gap-6 p-2">
-      {#each recipes as recipe}
+      {#each sortedRecipes as recipe}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div class="rounded-lg cursor-pointer py-2" on:click={() => openModal(recipe)}>
@@ -305,11 +303,11 @@ async function createAndRetrieveNewRecipe() {
       <div class="flex flex-col items-center justify-between h-full">
           <div class="flex-1 w-full overflow-y-auto">
             <div class="p-4">
-              <h2 class="text-2xl font-bold">{selectedRecipe.name}</h2>
+              <h2 class="text-2xl font-bold">{selectedRecipeData.name}</h2>
             </div>
 
             <!-- Recipe Image -->
-            <img src={selectedRecipe.image ? selectedRecipe.image : recipe_placeholder} alt={selectedRecipe.name} class="w-full h-64 object-cover rounded-2xl" />
+            <img src={selectedRecipeData.image ? selectedRecipeData.image : recipe_placeholder} alt={selectedRecipeData.name} class="w-full h-64 object-cover rounded-2xl" />
 
             <!-- Ingredients List -->
             <div class="px-4 mt-4">
