@@ -1,8 +1,9 @@
 <!-- HomePageItem.svelte -->
+<!-- Autor: Lukas Vecerka (xvecer30) -->
 <script>
     import { Link } from 'svelte-routing';
-    export let logoUrl = '/default-logo.png'; // Default logo path
-    export let linkPath = '/'; // Default background color class
+    export let logoUrl = '/default-logo.png';
+    export let linkPath = '/';
     export let text = '';
   </script>
   
