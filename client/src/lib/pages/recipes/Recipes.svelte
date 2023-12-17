@@ -256,7 +256,7 @@ async function createAndRetrieveNewRecipe() {
   }
 
   async function handleEditRecipe() {
-    navigate(`/createrecipe/${selectedRecipe.id}`);
+    navigate(`/createrecipe/${selectedRecipeData.id}`);
   }
 
   onMount(() => {
