@@ -220,10 +220,10 @@ async function createAndRetrieveNewRecipe() {
     }
   }
 
-  async function handleCookRecipeClick() {
-    const newRecipe = await createAndRetrieveNewRecipe();
-    if (newRecipe && newRecipe.id) {
-      navigate(`/recipeinteractive/${newRecipe.id}`);
+  async function handleCookRecipeClick(recipeid) {
+    // const newRecipe = await createAndRetrieveNewRecipe();
+    if (recipeid) {
+      navigate(`/recipeinteractive/${recipeid}`);
     }
   }
 
@@ -252,11 +252,6 @@ async function createAndRetrieveNewRecipe() {
   <div class="fixed bottom-0 right-0 mb-4 mr-4">
     <button on:click={handleCreateRecipeClick} class="focus:outline-none">
       <img src={plus_icon} alt="plus icon" class="w-20 h-20" />
-    </button>
-  </div>
-  <div class="fixed bottom-20 right-0 mb-4 mr-4">
-    <button on:click={handleCookRecipeClick} class="focus:outline-none">
-      <img src={frying_pan} alt="cook crecipe" class="w-20 h-20" />
     </button>
   </div>
 </div>
@@ -335,7 +330,7 @@ async function createAndRetrieveNewRecipe() {
 
           <!-- Action Buttons -->
           <div class="fixed bottom-0 py-2">
-              <button class="bg-green-500 text-white px-6 py-2 rounded-full font-bold">Cook</button>
+              <button on:click={()=>handleCookRecipeClick(selectedRecipeData.id)} class="bg-green-500 text-white px-6 py-2 rounded-full font-bold">Cook</button>
               <button on:click={handleEditRecipe} class="bg-yellow-500 text-white px-6 py-2 rounded-full font-bold">Edit</button>
               <button on:click={closeModal} class="bg-red-500 text-white px-6 py-2 rounded-full font-bold">Close</button>
           </div>
