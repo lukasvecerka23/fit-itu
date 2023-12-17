@@ -79,75 +79,81 @@
 
   <div>
     {#if currentStep === 1}
-    {#if RecipeData}
-    <div class="text-center py-4 bg-green-500 w-full">
-      <h2 class="text-xl font-bold text-white">What's this recipe called?</h2>
-    </div>
-    <div class="flex flex-col justify-center items-center min-h-screen">
-
-      <div class="w-full px-4 my-4">
-        <input
-          class="w-full p-2 border border-gray-300 rounded-md"
-          type="text"
-          placeholder="Name of your recipe..."
-          bind:value={RecipeData.name}
-        />
+      {#if RecipeData}
+      <div class="text-center py-4 bg-green-500 w-full">
+        <h2 class="text-xl font-bold text-white">What's this recipe called?</h2>
       </div>
+      <div class="flex flex-col justify-center items-center min-h-screen">
 
-      <div class="w-full px-4 my-4 relative">
-        {#if RecipeData.image}
-          <!-- svelte-ignore a11y-img-redundant-alt -->
-          <img src={RecipeData.image} alt="Recipe image" class="w-full h-64 object-cover rounded-md" />
-        {/if}
-        <label
-          for="file-upload"
-          class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white py-2 text-center cursor-pointer">
-          Select Picture
-        </label>
-        <input
-          id="file-upload"
-          type="file"
-          class="hidden"
-          on:change={handleImageSelect}
-        />
+        <div class="w-full px-4 my-4">
+          <input
+            class="w-full p-2 border border-gray-300 rounded-md"
+            type="text"
+            placeholder="Name of your recipe..."
+            bind:value={RecipeData.name}
+          />
+        </div>
+
+        <div class="w-full px-4 my-4 relative">
+          {#if RecipeData.image}
+            <!-- svelte-ignore a11y-img-redundant-alt -->
+            <img src={RecipeData.image} alt="Recipe image" class="w-full h-64 object-cover rounded-md" />
+          {/if}
+          <label
+            for="file-upload"
+            class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white py-2 text-center cursor-pointer">
+            Select Picture
+          </label>
+          <input
+            id="file-upload"
+            type="file"
+            class="hidden"
+            on:change={handleImageSelect}
+          />
+        </div>
       </div>
-    </div>
-  {:else}
-    <!-- Render some loading state here -->
-    <div class="flex justify-center items-center min-h-screen">
-      Loading...
-    </div>
-  {/if}
+      {:else}
+        <!-- Render some loading state here -->
+        <div class="flex justify-center items-center min-h-screen">
+          Loading...
+        </div>
+      {/if}
     {:else if currentStep === 2}
     <div class="text-center py-4 bg-green-500">
       <h2 class="text-xl font-bold text-white">Which ingredients will you need?</h2>
     </div>
     <div class="flex flex-col gap-2 items-center">
-      {#each RecipeData.expand.ingredients as ingredient}
-        <div class="flex justify-between border-b-2 border-black w-2/3">
-        <div class="flex gap-2">
-            <h1 class={`text-2xl font-poppins py-4 mb-0 mx-auto text-black`}>{ingredient.expand.ingredientId.name}</h1>
+      {#if RecipeData.ingredients.length === 0}
+        <div class="flex justify-center">
+          <h1 class="text-2xl font-poppins py-4 mb-0 mx-auto text-black">No ingredients added yet</h1>
+        </div>
+      {:else}
+        {#each RecipeData.expand.ingredients as ingredient}
+          <div class="flex justify-between border-b-2 border-black w-2/3">
+          <div class="flex gap-2">
+              <h1 class={`text-2xl font-poppins py-4 mb-0 mx-auto text-black`}>{ingredient.expand.ingredientId.name}</h1>
 
-        <div class="flex gap-2">
-          <input
-            type="number"
-            min=0
-            max={1000}
-            bind:value={ingredient.amount}
-            class="border-gray-600 font-poppins  focus:ring-opacity-50 border-2 m-4 text-xl p-4 rounded-full text-center focus:outline-none"
-            on:blur={() => saveAmount()}
-          />
-        </div>
-        <div class="flex gap-2"></div>
-        <h1 class="text-2xl font-poppins py-4 mb-0 mx-auto text-black"> {ingredient.expand.ingredientId.expand.unit.name}</h1>
-        </div>
-        <div class="flex gap-2 justify-end">
-        <button on:click={() => deleteIngredient()}>
-          <img src={remove} alt="remove" class="w-6 h-6"/>
-        </button>
-        </div>
-        </div>
-      {/each}
+          <div class="flex gap-2">
+            <input
+              type="number"
+              min=0
+              max={1000}
+              bind:value={ingredient.amount}
+              class="border-gray-600 font-poppins  focus:ring-opacity-50 border-2 m-4 text-xl p-4 rounded-full text-center focus:outline-none"
+              on:blur={() => saveAmount()}
+            />
+          </div>
+          <div class="flex gap-2"></div>
+          <h1 class="text-2xl font-poppins py-4 mb-0 mx-auto text-black"> {ingredient.expand.ingredientId.expand.unit.name}</h1>
+          </div>
+          <div class="flex gap-2 justify-end">
+          <button on:click={() => deleteIngredient()}>
+            <img src={remove} alt="remove" class="w-6 h-6"/>
+          </button>
+          </div>
+          </div>
+        {/each}
+      {/if}
       <!-- add ingredient button -->
       <div class="flex justify-center">
         <button class="bg-green-500 text-white px-6 py-2 rounded-full font-bold" on:click={() => addIngredient()}>Add ingredient</button>
@@ -159,28 +165,34 @@
         <h2 class="text-xl font-bold text-white">How is this dish prepared?</h2>
       </div>
       <div class="flex flex-col gap-2 items-center">
-      {#each RecipeData.expand.steps as step}
-        <div class="flex justify-between border-b-2 border-black w-2/3">
-        <div class="flex gap-2">
-            <h1 class={`text-2xl font-poppins py-4 mb-0 mx-auto text-black`}>{step.stepNumber}</h1>
+      {#if RecipeData.steps.length === 0}
+        <div class="flex justify-center">
+          <h1 class="text-2xl font-poppins py-4 mb-0 mx-auto text-black">No steps added yet</h1>
+        </div>
+      {:else}
+        {#each RecipeData.expand.steps as step}
+          <div class="flex justify-between border-b-2 border-black w-2/3">
+          <div class="flex gap-2">
+              <h1 class={`text-2xl font-poppins py-4 mb-0 mx-auto text-black`}>{step.stepNumber}</h1>
 
-        <div class="flex gap-2">
-          <input
-            type="text"
-            bind:value={step.text}
-            class="border-gray-600 font-poppins  focus:ring-opacity-50 border-2 m-4 text-xl p-4 rounded-full text-center focus:outline-none"
-            on:blur={() => saveStep()}
-          />
-        </div>
-        <div class="flex gap-2"></div>
-        </div>
-        <div class="flex gap-2 justify-end">
-        <button on:click={() => deleteIngredient()}>
-          <img src={remove} alt="remove" class="w-6 h-6"/>
-        </button>
-        </div>
-        </div>
-      {/each}
+          <div class="flex gap-2">
+            <input
+              type="text"
+              bind:value={step.text}
+              class="border-gray-600 font-poppins  focus:ring-opacity-50 border-2 m-4 text-xl p-4 rounded-full text-center focus:outline-none"
+              on:blur={() => saveStep()}
+            />
+          </div>
+          <div class="flex gap-2"></div>
+          </div>
+          <div class="flex gap-2 justify-end">
+          <button on:click={() => deleteIngredient()}>
+            <img src={remove} alt="remove" class="w-6 h-6"/>
+          </button>
+          </div>
+          </div>
+        {/each}
+      {/if}
       </div>
       <!-- Input fields for step 3 -->
       <!-- ... -->
@@ -201,18 +213,24 @@
         <div class="grid grid-cols-3 gap-4 items-center">
           <div class="font-bold">Ingredients</div>
           <div class="col-span-2 font-bold text-middle">Amount</div>
-          {#each RecipeData.expand.ingredients as ingredient, index}
-            <div>
-              <li class="list-disc list-inside">{ingredient.expand.ingredientId.name}</li>
+          {#if RecipeData.ingredients.length == 0}
+            <div class="flex justify-center">
+              <h1 class="text-2xl font-poppins py-4 mb-0 mx-auto text-black">No ingredients</h1>
             </div>
-            <div class="col-span-2 text-middle">
-              <div class="flex items-center space-x-4">
-              {ingredient.amount} {ingredient.expand.ingredientId.expand.unit.name}
-              <!-- Add icons here as needed -->
-                <!-- Icon SVG -->
+          {:else}
+            {#each RecipeData.expand.ingredients as ingredient, index}
+              <div>
+                <li class="list-disc list-inside">{ingredient.expand.ingredientId.name}</li>
               </div>
-            </div>
-          {/each}
+              <div class="col-span-2 text-middle">
+                <div class="flex items-center space-x-4">
+                {ingredient.amount} {ingredient.expand.ingredientId.expand.unit.name}
+                <!-- Add icons here as needed -->
+                  <!-- Icon SVG -->
+                </div>
+              </div>
+            {/each}
+          {/if}
         </div>
       </div>
 
@@ -220,9 +238,15 @@
       <div class="px-4 my-4">
         <h3 class="font-semibold text-lg mb-2">Steps</h3>
         <ol class="list-decimal pl-5">
-          {#each RecipeData.expand.steps as step, index}
-            {@html step.text}<br>
-          {/each}
+          {#if RecipeData.steps.length == 0}
+            <div class="flex justify-center">
+              <h1 class="text-2xl font-poppins py-4 mb-0 mx-auto text-black">No steps</h1>
+            </div>
+          {:else}
+            {#each RecipeData.expand.steps as step, index}
+              {@html step.text}<br>
+            {/each}
+          {/if}
         </ol>
       </div>
       <!-- ... -->
