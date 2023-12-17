@@ -31,7 +31,6 @@
         .then(data => {
             ingredientTypes = data.items;
             filteredIngredients = ingredientTypes;
-            console.log(ingredientTypes);
         })
         .catch(err => {
             console.error(err);
@@ -89,7 +88,7 @@
     $:fetchRecipe();
 
     function saveIngredient(){
-      const exists = RecipeData.expand.ingredients.find(item => item.ingredientId === newIngredient.ingredient);
+      const exists = (RecipeData.ingredients.length > 0) ? RecipeData.expand.ingredients.find(item => item.ingredientId === newIngredient.ingredient) : null;
       if (exists) {
         fetch(`https://fit-itu.hop.sh/api/collections/ingredientInRecipe/records/${exists.id}`, {
           method: 'PATCH',
