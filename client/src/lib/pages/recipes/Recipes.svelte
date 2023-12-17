@@ -97,7 +97,7 @@
       if (selectedRecipeData && selectedRecipeData.expand && selectedRecipeData.expand.ingredients){
       missingIngredients = selectedRecipeData.expand.ingredients.filter(ingredient => {
         const pantryItem = mergedIngredients[ingredient.ingredientId];
-        return !pantryItem || pantryItem.amount < ingredient.amount;
+        return !pantryItem || pantryItem < ingredient.amount;
       });
       }
 
