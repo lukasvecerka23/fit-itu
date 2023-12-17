@@ -15,16 +15,20 @@
 
     let ingredient_amount_null = false;
 
+    // drag and drop handler when changing section of ingredient
     function handleDragStart(event) {
         event.dataTransfer.setData('text/plain', ingredient.id);
     }
 
+    // updating amount of an ingredient
     async function saveAmount()
     {
+        // invalid data
         if (ingredient.amount == null || ingredient.amount == "")
         {
             ingredient.amount = 0;
         }
+        // update amount
         const data = ingredient;
         const resp = await fetch(`https://fit-itu.hop.sh/api/collections/ingredientInPantry/records/${ingredient.id}`, {
             method: 'PATCH',
@@ -42,15 +46,18 @@
         }
     }
 
+
+    // changes the amount when clicking the + and - buttons
     function updateAmount(operation, value)
     {
         if(operation == "+")
         {
             if(ingredient.expand.ingredient.expand.unit.name == "pcs")
             {
-                ingredient.amount += 1;
+                ingredient.amount += 1; // pcs change +1 only
 
-            } else if (ingredient.expand.ingredient.expand.unit.name == "g" || ingredient.expand.ingredient.expand.unit.name == "ml")
+            } //grams and mililitres change +10 
+            else if (ingredient.expand.ingredient.expand.unit.name == "g" || ingredient.expand.ingredient.expand.unit.name == "ml")
             {
                 ingredient.amount += 10;
             }
@@ -58,9 +65,10 @@
         {
             if(ingredient.expand.ingredient.expand.unit.name == "pcs")
             {
-                ingredient.amount -= 1;
+                ingredient.amount -= 1;  // pcs change -1 only
 
-            } else if (ingredient.expand.ingredient.expand.unit.name == "g" || ingredient.expand.ingredient.expand.unit.name == "ml")
+            } //grams and mililitres change -10
+             else if (ingredient.expand.ingredient.expand.unit.name == "g" || ingredient.expand.ingredient.expand.unit.name == "ml")
             {
                 ingredient.amount -= 10;
             }
@@ -74,6 +82,7 @@
         return;
     }
 
+    // deletes the ingredient when user click the trashbin button
     async function deleteIngredient()
     {
         const data = ingredient;
@@ -89,12 +98,13 @@
             const message = `An error has occured: ${resp.status}`;
             throw new Error(message);
         }
+        // tell the Pantry.svelte to reload
         reloadPantry.set(true);
     }
 </script>
 
 <div class="w-full">
-<div class="h-[100px] mb-4 bg-cover flex rounded-2xl overflow-hidden" draggable="true" on:dragstart={handleDragStart}>
+    <div class="h-[100px] mb-4 bg-cover flex rounded-2xl overflow-hidden" draggable="true" on:dragstart={handleDragStart}>
         <div class="flex w-[150px] cursor-move bg-cover h-full" style=" background-image: url({ingredient.expand.ingredient.imageUrl})">
         </div>
         <div class="border-2 rounded-r-2xl border-primary-green bg-primary-green text-white text-center w-full">
@@ -102,9 +112,9 @@
                 <div class="flex justify-between mt-1">
                     <p class="text-lg w-auto pl-2">{ingredient.expand.ingredient.name}</p>
                         <button 
-                        on:click={() => deleteIngredient()}
-                        class="flex p-1 h-8 mr-2 w-8 rounded-3xl ml-1 bg-primary-green justify-end hover:bg-secondary-green">
-                        <img src={delete_icon} alt="Edit">
+                            on:click={() => deleteIngredient()}
+                            class="flex p-1 h-8 mr-2 w-8 rounded-3xl ml-1 bg-primary-green justify-end hover:bg-secondary-green">
+                            <img src={delete_icon} alt="Edit">
                         </button>
                 </div>
                 <div class="pt-4 flex h-2/3 w-auto justify-center items-center">
@@ -122,9 +132,9 @@
                         on:click={() => updateAmount("+", null)}
                         class="flex  h-7 w-7 rounded-3xl ml-1 bg-primary-green hover:bg-secondary-green">
                         <img src={add_icon} alt="Edit">
-                </button>
+                    </button>
                 </div>
             </div>
         </div>
-</div>
+    </div>
 </div>
