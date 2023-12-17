@@ -11,8 +11,7 @@
     {
         if (ingredient.amount == null || ingredient.amount == "")
         {
-            ingredient_amount_null = true;
-            return;
+            ingredient.amount = 0;
         }
         const data = ingredient;
         const resp = await fetch(`https://fit-itu.hop.sh/api/collections/ingredientInPantry/records/${ingredient.id}`, {
