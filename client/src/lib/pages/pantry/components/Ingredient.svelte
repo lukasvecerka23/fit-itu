@@ -104,6 +104,7 @@
 </script>
 
 <div class="w-full">
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div class="h-[100px] mb-4 bg-cover flex rounded-2xl overflow-hidden" draggable="true" on:dragstart={handleDragStart}>
         <div class="flex w-[150px] cursor-move bg-cover h-full" style=" background-image: url({ingredient.expand.ingredient.imageUrl})">
         </div>

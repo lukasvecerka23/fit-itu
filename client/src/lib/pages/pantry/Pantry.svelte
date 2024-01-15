@@ -458,6 +458,8 @@
                 <div class="justify-start flex gap-2 w-auto">
                     {#each pantrySections as section}
                         {#if edit_pantry_id != section.id}
+
+                            <!-- svelte-ignore a11y-no-static-element-interactions -->
                             <div
                                 on:dragover={handleDragOver}
                                 on:drop={async (e) => await handleDrop(e)}
